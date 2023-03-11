@@ -23,6 +23,7 @@ public class AuthController {
         System.out.println("Nimadir232");
         System.out.println("Nimadir5678");
         System.out.println("yana nimadir");
+        System.out.println("Yana nimadir 22222");
         this.authUserRepository = authUserRepository;
         this.passwordEncoder = passwordEncoder;
 
