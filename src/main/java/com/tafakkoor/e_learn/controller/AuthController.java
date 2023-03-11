@@ -20,6 +20,7 @@ public class AuthController {
         System.out.println("hello from dilshod branch");
         System.out.println("Test 33");
         System.out.println("Nimadir");
+        System.out.println("Nimadir232");
         this.authUserRepository = authUserRepository;
         this.passwordEncoder = passwordEncoder;
 
