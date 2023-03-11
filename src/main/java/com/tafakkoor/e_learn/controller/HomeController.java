@@ -27,8 +27,6 @@ public class HomeController {
 
     @GetMapping("/home")
     public String hasAdminRole(Model model) {
-        var s = "{bcrypt}$sdjvbhksnfbpgdhjnvlworhgeirnkvmd";
-        var ss = "{noop}passwor";
         System.out.println("userSession.getUser().getId() = " + userSession.getId());
         return "home";
     }
