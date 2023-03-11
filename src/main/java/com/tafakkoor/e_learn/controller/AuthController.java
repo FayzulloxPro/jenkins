@@ -16,6 +16,7 @@ public class AuthController {
 
     public AuthController(AuthUserRepository authUserRepository, PasswordEncoder passwordEncoder) {
         System.out.println("Abdullo");
+        System.out.println("Dilshod");
         this.authUserRepository = authUserRepository;
         this.passwordEncoder = passwordEncoder;
 
