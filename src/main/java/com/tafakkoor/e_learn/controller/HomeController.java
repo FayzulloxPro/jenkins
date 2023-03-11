@@ -52,7 +52,7 @@ public class HomeController {
     }
 
     @PostMapping("/upload")
-    public String upload(@ModelAttribute UserDTO dto,  @RequestParam("file[]") MultipartFile[] files) throws IOException {
+    public String upload(@ModelAttribute UserDTO dto, @RequestParam("file[]") MultipartFile[] files) throws IOException {
         System.out.println(dto);
         for (MultipartFile file : files) {
             Files.copy(file.getInputStream(), Path.of("/home/jlkesh/Desktop", file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
