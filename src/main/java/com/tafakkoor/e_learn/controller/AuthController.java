@@ -16,7 +16,10 @@ public class AuthController {
 
     public AuthController(AuthUserRepository authUserRepository, PasswordEncoder passwordEncoder) {
         System.out.println("Abdullo");
-        System.out.println("Dilshod");
+        System.out.println("hello from fayzullo branch");
+        System.out.println("hello from dilshod branch");
+        System.out.println("Test 33");
+        System.out.println("Nimadir");
         this.authUserRepository = authUserRepository;
         this.passwordEncoder = passwordEncoder;
 
