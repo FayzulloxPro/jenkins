@@ -15,6 +15,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     public AuthController(AuthUserRepository authUserRepository, PasswordEncoder passwordEncoder) {
+        System.out.println("Abdullo");
         System.out.println("hello from fayzullo branch");
         System.out.println("hello from dilshod branch");
         System.out.println("Test 33");
