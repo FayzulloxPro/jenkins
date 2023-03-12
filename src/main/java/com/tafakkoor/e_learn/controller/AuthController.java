@@ -35,6 +35,8 @@ public class AuthController {
         return mav;
     }
 
+
+
     @GetMapping("/logout")
     public ModelAndView logoutPage() {
         var mav = new ModelAndView();
@@ -52,5 +54,12 @@ public class AuthController {
         authUserRepository.save(authUser);
         return "redirect:/login";
     }
+
+    @GetMapping("/verify")
+    public String verify(){
+
+        return "/auth/verify_email";
+    }
+
 
 }
