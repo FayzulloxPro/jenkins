@@ -6,9 +6,12 @@ import com.tafakkoor.e_learn.repository.AuthUserRepository;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.Map;
 
 @Controller
 @RequestMapping("/auth")
@@ -45,7 +48,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute UserRegisterDTO dto, BindingResult result) {
+    public String register(@Valid @ModelAttribute UserRegisterDTO dto, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "auth/register";
         }
@@ -59,6 +62,7 @@ public class AuthController {
                 .email(dto.email())
                 .build();
         authUserRepository.save(authUser);
+        model.addAllAttributes(Map.of("username", dto.username()));
         return "redirect:/verify";
     }
 

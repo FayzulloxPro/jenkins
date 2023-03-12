@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface AuthUserRepository extends JpaRepository<AuthUser, String> {
     Optional<AuthUser> findByUsernameIgnoreCase(String username);
+    boolean activateUser(String username);
+
 }

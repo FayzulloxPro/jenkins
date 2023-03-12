@@ -12,6 +12,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Configuration
 @EnableWebSecurity
@@ -28,7 +29,7 @@ public class SecurityConfigurer {
             "/js/**",
             "/home",
             "/auth/login",
-            "/upload",
+            "/auth/verify",
             "/auth/register"
     };
     private final AuthUserUserDetailsService authUserUserDetailsService;
