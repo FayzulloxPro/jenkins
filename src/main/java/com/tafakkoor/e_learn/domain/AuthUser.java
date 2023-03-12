@@ -52,8 +52,8 @@ public class AuthUser extends Auditable {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Levels level = Levels.DEFAULT;
-    private LocalDate birthDate; // TODO: 3/12/23 congratulation message on birthday
-    private LocalDateTime lastLogin; // TODO: 3/12/23 send email to user if the user didn't login for 3 days
+    private LocalDate birthDate;
+    private LocalDateTime lastLogin;
     @Column(nullable = false, columnDefinition = "integer default 0")
     @Builder.Default
     private Integer score = 0;

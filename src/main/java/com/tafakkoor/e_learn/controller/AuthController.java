@@ -74,12 +74,13 @@ public class AuthController {
                 .email(dto.email())
                 .build();
         authUserRepository.save(authUser);
-        System.out.println(authUser);
-        String token = UUID.randomUUID().toString();
+
+        String token = UUID.randomUUID().toString();  // TODO: 3/12/23 encrypt token
         String email = authUser.getEmail();
-        System.out.println(email);
+
         String link = Container.BASE_URL + "auth/activate?token=" + token;
         System.out.println(link);
+
         String body = """
                 Subject: Activate Your Account
                                 
@@ -94,13 +95,16 @@ public class AuthController {
                 Best regards,
                 E-Learn LTD.
                 """.formatted(dto.username(), link);
+
         Token token1 = Token.builder()
                 .token(token)
                 .user(authUser)
                 .validTill(LocalDateTime.now().plusSeconds(10))
                 .build();
+
         tokenRepository.save(token1);
-        CompletableFuture.runAsync(() -> EmailService.sendActivationToken(email, body, "Activate Email"));
+
+        CompletableFuture.runAsync(() -> EmailService.getInstance().sendActivationToken(email, body, "Activate Email"));
         return "auth/verify_email";
     }
 
@@ -117,7 +121,6 @@ public class AuthController {
                 return "auth/code_activated";
             } else {
                 return "auth/code_expired";
-                // TODO: 12/03/23 cron-job to delete inactive users (inactive user is a user with status STATUS.INACTIVE
             }
         }else{
             return "auth/code_expired";
