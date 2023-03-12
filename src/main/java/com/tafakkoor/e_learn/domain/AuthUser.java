@@ -14,11 +14,7 @@ import java.util.Collection;
 @ToString
 @Builder
 @Entity
-public class AuthUser {
-    @Id
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @GeneratedValue(generator = "uuid2")
-    private String id;
+public class AuthUser extends Auditable{
 
     @Column(unique = true, nullable = false)
     private String username;
