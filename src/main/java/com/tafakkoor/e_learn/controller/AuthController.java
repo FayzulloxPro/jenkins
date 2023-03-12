@@ -99,7 +99,7 @@ public class AuthController {
         Token token1 = Token.builder()
                 .token(token)
                 .user(authUser)
-                .validTill(LocalDateTime.now().plusSeconds(10))
+                .validTill(LocalDateTime.now().plusMinutes(5))
                 .build();
 
         tokenRepository.save(token1);
