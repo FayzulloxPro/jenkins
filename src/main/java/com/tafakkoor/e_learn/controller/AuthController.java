@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/auth")
+@RequestMapping( "/auth" )
 public class AuthController {
     private final AuthUserRepository authUserRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthController(AuthUserRepository authUserRepository, PasswordEncoder passwordEncoder) {
+    public AuthController( AuthUserRepository authUserRepository, PasswordEncoder passwordEncoder ) {
         System.out.println("Abdullo");
         System.out.println("hello from fayzullo branch");
         System.out.println("hello from dilshod branch");
@@ -30,30 +30,30 @@ public class AuthController {
 
     }
 
-    @GetMapping("/register")
+    @GetMapping( "/register" )
     public ModelAndView registerPage() {
         var mav = new ModelAndView();
         mav.setViewName("auth/register");
         return mav;
     }
 
-    @GetMapping("/login")
-    public ModelAndView loginPage(@RequestParam(required = false) String error) {
+    @GetMapping( "/login" )
+    public ModelAndView loginPage( @RequestParam( required = false ) String error ) {
         var mav = new ModelAndView();
         mav.addObject("error", error);
         mav.setViewName("auth/login");
         return mav;
     }
 
-    @GetMapping("/logout")
+    @GetMapping( "/logout" )
     public ModelAndView logoutPage() {
         var mav = new ModelAndView();
         mav.setViewName("auth/logout");
         return mav;
     }
 
-    @PostMapping("/register")
-    public String register(@ModelAttribute UserRegisterDTO dto) {
+    @PostMapping( "/register" )
+    public String register( @ModelAttribute UserRegisterDTO dto ) {
         AuthUser authUser = AuthUser.builder()
                 .username(dto.username())
                 .password(passwordEncoder.encode(dto.password()))
