@@ -15,7 +15,7 @@ public abstract class Auditable {
     private Long id;
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Tashkent'")
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at")
