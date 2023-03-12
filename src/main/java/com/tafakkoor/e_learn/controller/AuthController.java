@@ -1,10 +1,12 @@
 package com.tafakkoor.e_learn.controller;
 
-import com.tafakkoor.e_learn.UserRegisterDTO;
+import com.tafakkoor.e_learn.dto.UserRegisterDTO;
 import com.tafakkoor.e_learn.domain.AuthUser;
 import com.tafakkoor.e_learn.repository.AuthUserRepository;
+import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -43,14 +45,21 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute UserRegisterDTO dto) {
+    public String register(@Valid @ModelAttribute UserRegisterDTO dto, BindingResult result) {
+        if (result.hasErrors()) {
+            return "auth/register";
+        }
+        if (!dto.password().equals(dto.confirmPassword())) {
+            result.rejectValue("confirmPassword", "", "Passwords do not match");
+            return "auth/register";
+        }
         AuthUser authUser = AuthUser.builder()
                 .username(dto.username())
                 .password(passwordEncoder.encode(dto.password()))
                 .email(dto.email())
                 .build();
         authUserRepository.save(authUser);
-        return "redirect:/login";
+        return "redirect:/verify";
     }
 
 }

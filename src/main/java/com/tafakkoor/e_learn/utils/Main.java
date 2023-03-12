@@ -2,6 +2,7 @@ package com.tafakkoor.e_learn.utils;
 
 import com.tafakkoor.e_learn.controller.AuthController;
 import com.tafakkoor.e_learn.domain.AuthUser;
+import com.tafakkoor.e_learn.enums.Status;
 import com.tafakkoor.e_learn.repository.AuthUserRepository;
 
 public class Main {
@@ -12,6 +13,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        AuthUser authUser = new AuthUser("username", "password", "email", null, AuthUser.Status.ACTIVE);
+
     }
 }
