@@ -27,8 +27,6 @@ public class HomeController {
 
     @GetMapping("/home")
     public String hasAdminRole(Model model) {
-        var s = "{bcrypt}$sdjvbhksnfbpgdhjnvlworhgeirnkvmd";
-        var ss = "{noop}passwor";
         System.out.println("userSession.getUser().getId() = " + userSession.getId());
         return "home";
     }
@@ -54,7 +52,7 @@ public class HomeController {
     }
 
     @PostMapping("/upload")
-    public String upload(@ModelAttribute UserDTO dto,  @RequestParam("file[]") MultipartFile[] files) throws IOException {
+    public String upload(@ModelAttribute UserDTO dto, @RequestParam("file[]") MultipartFile[] files) throws IOException {
         System.out.println(dto);
         for (MultipartFile file : files) {
             Files.copy(file.getInputStream(), Path.of("/home/jlkesh/Desktop", file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);

@@ -52,9 +52,11 @@ public class SecurityConfigurer {
                                 .loginProcessingUrl("/auth/login")
                                 .usernameParameter("uname")
                                 .passwordParameter("pswd")
-                                .defaultSuccessUrl("/home2", false)
+                                .defaultSuccessUrl("/home", false)
                                 .failureHandler(authenticationFailureHandler)
                 )
+
+
                 .logout(httpSecurityLogoutConfigurer ->
                         httpSecurityLogoutConfigurer
                                 .logoutUrl("/auth/logout")
