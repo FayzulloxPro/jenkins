@@ -14,7 +14,6 @@ public class ApplicationConfig extends AbstractAnnotationConfigDispatcherServlet
     protected Class<?>[] getServletConfigClasses() {
         return new Class[]{MvcConfiguration.class};
     }
-
     @Override
     protected String[] getServletMappings() {
         return new String[]{"/"};
