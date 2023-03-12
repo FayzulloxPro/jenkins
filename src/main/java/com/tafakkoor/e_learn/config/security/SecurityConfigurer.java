@@ -12,7 +12,6 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 @Configuration
 @EnableWebSecurity
@@ -23,15 +22,16 @@ import java.time.temporal.ChronoUnit;
 
 )
 public class SecurityConfigurer {
-
     public static final String[] WHITE_LIST = {
             "/css/**",
             "/js/**",
             "/home",
             "/auth/login",
-            "/auth/verify",
-            "/auth/register"
+            "/upload",
+            "/auth/register",
+            "/auth/**",
     };
+
     private final AuthUserUserDetailsService authUserUserDetailsService;
     private final AuthenticationFailureHandler authenticationFailureHandler;
 

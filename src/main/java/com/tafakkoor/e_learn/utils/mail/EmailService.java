@@ -15,7 +15,9 @@ import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.Message;
 
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
@@ -66,7 +68,7 @@ public class EmailService {
             throw new RuntimeException(e);
         }
     }
-// qkqcmsawjhlwezlg
+
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
         InputStream in = EmailService.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
@@ -102,5 +104,37 @@ public class EmailService {
         Message message = createMessageWithEmail(emailContent);
         message = service.users().messages().send("me", message).execute();
         System.out.println("Message sent: " + message.toPrettyString());
+    }
+
+    public static void sendActivationToken( String email, String body, String subject) {
+        String from = "strengthnumberone@gmail.com";
+        String host = "smtp.gmail.com";
+
+        Properties properties = System.getProperties();
+        properties.put("mail.smtp.host", host);
+        properties.put("mail.smtp.port", "465");
+        properties.put("mail.smtp.ssl.enable", "true");
+        properties.put("mail.smtp.auth", "true");
+
+        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("strengthnumberone@gmail.com", "qkqcmsawjhlwezlg");
+            }
+        });
+
+        try {
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(from));
+
+            message.addRecipient(javax.mail.Message.RecipientType.TO, new InternetAddress(email));
+            message.setSubject(subject);
+            message.setText(body);
+            System.out.print("Sending...");
+            Transport.send(message);
+            System.out.print("\rMessage sent successfully");
+            System.out.println();
+        } catch (MessagingException ex) {
+            ex.printStackTrace();
+        }
     }
 }
