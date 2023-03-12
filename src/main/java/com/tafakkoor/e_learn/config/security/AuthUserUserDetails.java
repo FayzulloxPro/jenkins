@@ -44,7 +44,7 @@ public class AuthUserUserDetails implements UserDetails {
         return authUser;
     }
 
-    public String getId() {
+    public Long getId() {
         return authUser.getId();
     }
 

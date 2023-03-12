@@ -13,11 +13,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @ToString
 @Builder
-public class AuthRole {
-    @Id
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @GeneratedValue(generator = "uuid2")
-    private String id;
+public class AuthRole extends Auditable{
     @Column(nullable = false)
     private String name;
     @Column(nullable = false, unique = true)

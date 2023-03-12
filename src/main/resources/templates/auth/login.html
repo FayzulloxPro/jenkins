@@ -1,136 +1,136 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments :: head(~{::title},~{::link})}">
-  <title>Login</title>
-  <link rel="stylesheet" href="/css/login.css">
-  <link rel="stylesheet" href="/css/main.css">
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 <form method="post" th:action="@{/auth/login}">
-  <div id="container" class="container">
-    <!-- FORM SECTION -->
-    <div class="row">
-      <!-- SIGN UP -->
-      <div class="col align-items-center flex-col sign-up">
-        <div class="form-wrapper align-items-center">
-          <div class="form sign-up">
-            <div class="input-group">
-              <i class='bx bxs-user'></i>
-              <input type="text">
-            </div>
-            <div class="input-group">
-              <i class='bx bx-mail-send'></i>
+    <div id="container" class="container">
+        <!-- FORM SECTION -->
+        <div class="row">
+            <!-- SIGN UP -->
+            <div class="col align-items-center flex-col sign-up">
+                <div class="form-wrapper align-items-center">
+                    <div class="form sign-up">
+                        <div class="input-group">
+                            <i class='bx bxs-user'></i>
+                            <input type="text">
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bx-mail-send'></i>
 
-              <input type="email">
+                            <input type="email">
 
-            </div>
-            <div class="input-group">
-              <i class='bx bxs-lock-alt'></i>
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
 
-              <div id="passwordInput">
-                <input type="password">
-                <span id="showHide">SHOW</span>
-              </div>
-              <div id="passwordStrength">
-                <span id="poor"></span>
-                <span id="weak"></span>
-                <span id="strong"></span>
-              </div>
-              <div id="passwordInfo"></div>
+                            <div id="passwordInput">
+                                <input type="password">
+                                <span id="showHide">SHOW</span>
+                            </div>
+                            <div id="passwordStrength">
+                                <span id="poor"></span>
+                                <span id="weak"></span>
+                                <span id="strong"></span>
+                            </div>
+                            <div id="passwordInfo"></div>
 
-            </div>
-            <div class="input-group">
-              <i class='bx bxs-lock-alt'></i>
-              <input type="password">
-            </div>
-            <div>
-              <button type="submit">
-                Sign up
-              </button>
-            </div>
-            <p>
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input type="password">
+                        </div>
+                        <div>
+                            <button type="submit">
+                                Sign up
+                            </button>
+                        </div>
+                        <p>
 							<span>
 								Already have an account?
 							</span>
-              <b onclick="toggle()" class="pointer">
-                Sign in here
-              </b>
-            </p>
-          </div>
-        </div>
+                            <b onclick="toggle()" class="pointer">
+                                Sign in here
+                            </b>
+                        </p>
+                    </div>
+                </div>
 
-      </div>
-      <!-- END SIGN UP -->
-      <!-- SIGN IN -->
-      <div class="col align-items-center flex-col sign-in">
-        <div class="form-wrapper align-items-center">
-          <div class="form sign-in ">
-            <div style="color: red" th:if="${error}">
-                <snap class="small text-left" th:text="${error}"></snap>
             </div>
-            <div class="input-group">
-              <i class='bx bxs-user'></i>
-              <input type="text" id="username" name="uname" placeholder="Username">
-            </div>
+            <!-- END SIGN UP -->
+            <!-- SIGN IN -->
+            <div class="col align-items-center flex-col sign-in">
+                <div class="form-wrapper align-items-center">
+                    <div class="form sign-in ">
+                        <div style="color: red" th:if="${error}">
+                            <snap class="small text-left" th:text="${error}"></snap>
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bxs-user'></i>
+                            <input type="text" id="username" name="uname" placeholder="Username">
+                        </div>
 
 
-            <div class="input-group">
-              <i class='bx bxs-lock-alt'></i>
-              <input type="password" id="password" name="pswd" placeholder="Password">
-            </div>
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input type="password" id="password" name="pswd" placeholder="Password">
+                        </div>
 
 
-<!--                                    <div>-->
-<!--                                        <div class="primary-switch">-->
-<!--                                              <h6 class="text-center" style="color: black">Remember me</h6>-->
-<!--                                              <i class='bx bxs-user'></i>-->
-<!--                                              <input hidden="hidden"  type="checkbox" id="primary-switch" checked name="rememberMe">-->
-<!--                                              <label for="primary-switch"><br></label>-->
-<!--                                          </div>-->
-<!--                                    </div>-->
+                        <!--                                    <div>-->
+                        <!--                                        <div class="primary-switch">-->
+                        <!--                                              <h6 class="text-center" style="color: black">Remember me</h6>-->
+                        <!--                                              <i class='bx bxs-user'></i>-->
+                        <!--                                              <input hidden="hidden"  type="checkbox" id="primary-switch" checked name="rememberMe">-->
+                        <!--                                              <label for="primary-switch"><br></label>-->
+                        <!--                                          </div>-->
+                        <!--                                    </div>-->
 
 
-            <div>
-              <button type="submit">
-                Sign in
-              </button>
-            </div>
-            <p>
+                        <div>
+                            <button type="submit">
+                                Sign in
+                            </button>
+                        </div>
+                        <p>
 							<span>
 								Don't have an account?
 							</span>
-              <b class="pointer">
-                <a th:href="@{/auth/register}">Sign up here</a>
-              </b>
-            </p>
-          </div>
+                            <b class="pointer">
+                                <a th:href="@{/auth/register}">Sign up here</a>
+                            </b>
+                        </p>
+                    </div>
 
-        </div>
-        <div class="form-wrapper">
+                </div>
+                <div class="form-wrapper">
 
+                </div>
+            </div>
+            <!-- END SIGN IN -->
         </div>
-      </div>
-      <!-- END SIGN IN -->
+        <!-- END FORM SECTION -->
+        <!-- CONTENT SECTION -->
+        <div class="row content-row">
+            <!-- SIGN IN CONTENT -->
+            <div class="col align-items-center flex-col">
+                <div class="text sign-in">
+                    <h2 style="color: white">
+                        Welcome!
+                    </h2>
+
+                </div>
+                <div class="img sign-in">
+
+                </div>
+            </div>
+            <!-- END SIGN IN CONTENT -->
+        </div>
+        <!-- END CONTENT SECTION -->
     </div>
-    <!-- END FORM SECTION -->
-    <!-- CONTENT SECTION -->
-    <div class="row content-row">
-      <!-- SIGN IN CONTENT -->
-      <div class="col align-items-center flex-col">
-        <div class="text sign-in">
-          <h2 style="color: white">
-            Welcome!
-          </h2>
-
-        </div>
-        <div class="img sign-in">
-
-        </div>
-      </div>
-      <!-- END SIGN IN CONTENT -->
-    </div>
-    <!-- END CONTENT SECTION -->
-  </div>
 </form>
 <script src="/js/login.js"></script>
 </body>
