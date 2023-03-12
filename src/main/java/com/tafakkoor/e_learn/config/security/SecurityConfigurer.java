@@ -18,7 +18,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 )
 public class SecurityConfigurer {
-
     public static final String[] WHITE_LIST = {
             "/css/**",
             "/js/**",
