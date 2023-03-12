@@ -17,7 +17,7 @@ public class UserSession {
         return null;
     }
 
-    public String getId() {
+    public Long getId() {
         AuthUser user = getUser();
         if (user != null)
             return user.getId();

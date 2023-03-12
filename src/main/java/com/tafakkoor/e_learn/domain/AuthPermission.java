@@ -1,9 +1,6 @@
 package com.tafakkoor.e_learn.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -14,14 +11,9 @@ import org.hibernate.annotations.GenericGenerator;
 @NoArgsConstructor
 @ToString
 @Builder
-public class AuthPermission {
-    @Id
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @GeneratedValue(generator = "uuid2")
-    private String id;
+public class AuthPermission extends Auditable{
     @Column(nullable = false)
     private String name;
     @Column(nullable = false, unique = true)
     private String code;
-
 }
