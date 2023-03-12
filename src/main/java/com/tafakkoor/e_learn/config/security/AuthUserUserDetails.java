@@ -3,10 +3,12 @@ package com.tafakkoor.e_learn.config.security;
 import com.tafakkoor.e_learn.domain.AuthPermission;
 import com.tafakkoor.e_learn.domain.AuthRole;
 import com.tafakkoor.e_learn.domain.AuthUser;
+import com.tafakkoor.e_learn.enums.Status;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -60,7 +62,7 @@ public class AuthUserUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !authUser.getStatus().equals(AuthUser.Status.BLOCKED);
+        return !authUser.getStatus().equals(Status.BLOCKED);
     }
 
     @Override
@@ -70,6 +72,9 @@ public class AuthUserUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return AuthUser.Status.ACTIVE.equals(authUser.getStatus());
+        return Status.ACTIVE.equals(authUser.getStatus());
+    }
+    public void setLastLogin(LocalDateTime lastLogin) {
+        authUser.setLastLogin(lastLogin);
     }
 }
