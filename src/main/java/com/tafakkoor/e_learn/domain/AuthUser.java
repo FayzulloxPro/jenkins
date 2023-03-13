@@ -1,9 +1,14 @@
 package com.tafakkoor.e_learn.domain;
 
+import com.tafakkoor.e_learn.enums.Levels;
+import com.tafakkoor.e_learn.enums.Status;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 
@@ -14,12 +19,21 @@ import java.util.Collection;
 @ToString
 @Builder
 @Entity
-public class AuthUser extends Auditable{
-
+public class AuthUser extends Auditable {
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Image image;
+    @NotBlank(message = "Username cannot be blank")
+    @Pattern(regexp="^\\S+$", message="Username cannot contain whitespace")
     @Column(unique = true, nullable = false)
     private String username;
+    @NotBlank(message = "Password cannot be blank")
+    @Pattern(regexp="^\\S+$", message="Password cannot contain whitespace")
+    @Pattern(regexp="^(?=.*[0-9])(?=.*[a-z]).{8,}$", message="Choose a stronger password")
     @Column(nullable = false)
     private String password;
+    private String firstName;
+    private String lastName;
     @Column(unique = true, nullable = false)
     private String email;
 
@@ -35,10 +49,13 @@ public class AuthUser extends Auditable{
     @Builder.Default
     private Status status = Status.INACTIVE;
 
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Levels level = Levels.DEFAULT;
+    private LocalDate birthDate;
+    private LocalDateTime lastLogin;
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    @Builder.Default
+    private Integer score = 0;
 
-    public enum Status {
-        BLOCKED,
-        INACTIVE,
-        ACTIVE
-    }
 }

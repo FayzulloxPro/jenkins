@@ -1,6 +1,6 @@
 package com.tafakkoor.e_learn.controller;
 
-import com.tafakkoor.e_learn.CustomRuntimeException;
+import com.tafakkoor.e_learn.exceptions.CustomRuntimeException;
 import com.tafakkoor.e_learn.config.security.UserSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

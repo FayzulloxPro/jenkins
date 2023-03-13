@@ -5,9 +5,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.time.LocalDateTime;
 
 @Configuration
 @EnableWebSecurity
@@ -18,15 +22,16 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 )
 public class SecurityConfigurer {
-
     public static final String[] WHITE_LIST = {
             "/css/**",
             "/js/**",
             "/home",
             "/auth/login",
             "/upload",
-            "/auth/register"
+            "/auth/register",
+            "/auth/**",
     };
+
     private final AuthUserUserDetailsService authUserUserDetailsService;
     private final AuthenticationFailureHandler authenticationFailureHandler;
 
@@ -64,17 +69,21 @@ public class SecurityConfigurer {
                                 .clearAuthentication(true)
                                 .deleteCookies("JSESSIONID", "rememberME")
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout", "POST"))
+
                 )
                 .userDetailsService(authUserUserDetailsService)
                 .rememberMe(httpSecurityRememberMeConfigurer ->
                         httpSecurityRememberMeConfigurer
                                 .rememberMeParameter("rememberMe")
                                 .key("EWT$@WEFYG%H$ETGE@R!T#$HJYYT$QGRWHNJU%$TJRUYRHFRYFJRYUYRHD")
-                                .tokenValiditySeconds(10 * 24 * 60 * 60)// default is 30 minutes
+                                .tokenValiditySeconds(24 * 60 * 60)// default is 30 minutes
                                 .rememberMeCookieName("rememberME")
+                                .authenticationSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> {
+                                    AuthUserUserDetails userDetails = (AuthUserUserDetails) authUserUserDetailsService.loadUserByUsername(authentication.getName());
+                                    userDetails.setLastLogin(LocalDateTime.now());
+                                    authUserUserDetailsService.save(userDetails.getAuthUser());
+                                })
                 );
-
-
         return http.build();
     }
 

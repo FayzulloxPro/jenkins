@@ -1,6 +1,6 @@
 package com.tafakkoor.e_learn.handlers;
 
-import com.tafakkoor.e_learn.CustomRuntimeException;
+import com.tafakkoor.e_learn.exceptions.CustomRuntimeException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
