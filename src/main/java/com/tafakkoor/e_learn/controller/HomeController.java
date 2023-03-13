@@ -27,7 +27,6 @@ public class HomeController {
 
     @GetMapping("/home")
     public String hasAdminRole(Model model) {
-        System.out.println("userSession.getUser().getId() = " + userSession.getId());
         return "home";
     }
 

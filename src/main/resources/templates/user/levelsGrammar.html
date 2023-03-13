@@ -17,6 +17,9 @@
 </head>
 <body style="background-color: #e9ecef">
 <br><br><br>
+<div class="wrapper" style="background-color: palevioletred" >
+    <h1 th:value="${levelNotFound}"></h1>
+</div>
 
 <div class="wrapper" th:if="${levels.size()==0}">
     <h1 class="bs-info" style="text-align: center">You have not taken assessment test yet!</h1>
