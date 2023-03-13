@@ -63,7 +63,7 @@ public class AuthController {
 
     @PostMapping( "/register" )
     public String register( @Valid @ModelAttribute UserRegisterDTO dto, BindingResult result ) {
-
+        Util util = Util.getInstance();
         if ( result.hasErrors() ) {
             return "auth/register";
         }
@@ -84,26 +84,8 @@ public class AuthController {
         String token = TokenGenerator.generateToken();  // TODO: 3/12/23 encrypt token
         String email = authUser.getEmail();
 
-        String link = Container.BASE_URL + "auth/activate?token=" + token;
-
-        String body = """
-                Subject: Activate Your Account
-                                
-                Dear %s,
-                                
-                Thank you for registering on our website. To activate your account, please click on the following link:
-                                
-                %s
-                                
-                If you have any questions or need assistance, please contact us at [SUPPORT_EMAIL OR TELEGRAM_BOT].
-                                
-                Best regards,
-                E-Learn LTD.
-                """.formatted(dto.username(), link);
-
-        Token token1 = Util.getInstance().buildToken(token, authUser);
-
-        tokenRepository.save(token1);
+        String body = util.generateBody(dto.username(), token);
+        tokenRepository.save(util.buildToken(token, authUser));
 
         CompletableFuture.runAsync(() -> EmailService.getInstance().sendActivationToken(email, body, "Activate Email"));
         return "auth/verify_email";
