@@ -1,12 +1,16 @@
 package com.tafakkoor.e_learn.config.security;
 
 import com.tafakkoor.e_learn.domain.AuthUser;
+import com.tafakkoor.e_learn.enums.Levels;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 
 @Component
+@RequestScope
 public class UserSession {
     public AuthUser getUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -21,6 +25,12 @@ public class UserSession {
         AuthUser user = getUser();
         if (user != null)
             return user.getId();
+        return null;
+    }
+    public Levels getLevel() {
+        AuthUser user = getUser();
+        if (user != null)
+            return user.getLevel();
         return null;
     }
 }
