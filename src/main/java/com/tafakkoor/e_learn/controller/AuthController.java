@@ -1,48 +1,44 @@
 package com.tafakkoor.e_learn.controller;
 
+import com.tafakkoor.e_learn.domain.AuthUser;
 import com.tafakkoor.e_learn.domain.Token;
 import com.tafakkoor.e_learn.dto.UserRegisterDTO;
-import com.tafakkoor.e_learn.domain.AuthUser;
 import com.tafakkoor.e_learn.enums.Status;
 import com.tafakkoor.e_learn.repository.AuthUserRepository;
 import com.tafakkoor.e_learn.repository.TokenRepository;
-import com.tafakkoor.e_learn.utils.Container;
-import com.tafakkoor.e_learn.utils.Encrypt;
-import com.tafakkoor.e_learn.utils.mail.EmailService;
+import com.tafakkoor.e_learn.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.net.http.HttpRequest;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 @Controller
 @RequestMapping( "/auth" )
 public class AuthController {
     private final AuthUserRepository authUserRepository;
+    private final UserService userService;
 
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthController( AuthUserRepository authUserRepository, TokenRepository tokenRepository, PasswordEncoder passwordEncoder ) {
+    public AuthController(AuthUserRepository authUserRepository, UserService userService, TokenRepository tokenRepository, PasswordEncoder passwordEncoder ) {
         this.authUserRepository = authUserRepository;
+        this.userService = userService;
         this.tokenRepository = tokenRepository;
         this.passwordEncoder = passwordEncoder;
 
     }
 
     @GetMapping( "/register" )
-    public ModelAndView registerPage() {
-        var mav = new ModelAndView();
-        mav.setViewName("auth/register");
-        return mav;
+    public String registerPage(Model model) {
+        model.addAttribute("auth_user", new AuthUser());
+        return "auth/register";
     }
 
     @GetMapping( "/login" )
@@ -66,53 +62,19 @@ public class AuthController {
         if ( result.hasErrors() ) {
             return "auth/register";
         }
+
         if ( !dto.password().equals(dto.confirmPassword()) ) {
             result.rejectValue("confirmPassword", "", "Passwords do not match");
             return "auth/register";
         }
-        AuthUser authUser = AuthUser.builder()
-                .username(dto.username())
-                .password(passwordEncoder.encode(dto.password()))
-                .email(dto.email())
-                .build();
-        authUserRepository.save(authUser);
 
-        String token = UUID.randomUUID().toString();  // TODO: 3/12/23 encrypt token
-        String email = authUser.getEmail();
+        userService.saveUserAndSendEmail(dto);
 
-        String link = Container.BASE_URL + "auth/activate?token=" + token;
-        System.out.println(link);
-
-        String body = """
-                Subject: Activate Your Account
-                                
-                Dear %s,
-                                
-                Thank you for registering on our website. To activate your account, please click on the following link:
-                                
-                %s
-                                
-                If you have any questions or need assistance, please contact us at [SUPPORT_EMAIL OR TELEGRAM_BOT].
-                                
-                Best regards,
-                E-Learn LTD.
-                """.formatted(dto.username(), link);
-
-        Token token1 = Token.builder()
-                .token(Encrypt.hashPassword(token))
-                .user(authUser)
-                .validTill(LocalDateTime.now().plusMinutes(5))
-                .build();
-
-        tokenRepository.save(token1);
-
-        CompletableFuture.runAsync(() -> EmailService.getInstance().sendActivationToken(email, body, "Activate Email"));
         return "auth/verify_email";
     }
 
     @GetMapping( "/activate" )
-    public String activate( @RequestParam( name = "token" ) String token) {
-
+    public String activate( @RequestParam( name = "token" ) String token ) {
         Optional<Token> byToken = tokenRepository.findByToken(token);
         if(byToken.isPresent()){
             Token token1 = byToken.get();
@@ -129,4 +91,7 @@ public class AuthController {
             return "auth/code_expired";
         }
     }
+
+
+
 }
