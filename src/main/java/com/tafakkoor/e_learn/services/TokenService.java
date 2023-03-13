@@ -1,12 +1,27 @@
-package com.tafakkoor.e_learn.utils;
+package com.tafakkoor.e_learn.services;
+
+import com.tafakkoor.e_learn.domain.Token;
+import com.tafakkoor.e_learn.repository.TokenRepository;
+import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-public class TokenGenerator {
-    public static String generateToken() {
+@Service
+public class TokenService {
+    private final TokenRepository tokenRepository;
+
+    public TokenService(TokenRepository tokenRepository) {
+        this.tokenRepository = tokenRepository;
+    }
+
+    public void save(Token token){
+       tokenRepository.save(token);
+    }
+
+    public String generateToken() {
         SecureRandom secureRandom = new SecureRandom();
         byte[] randomBytes = new byte[32];
         secureRandom.nextBytes(randomBytes);
@@ -22,4 +37,3 @@ public class TokenGenerator {
         }
     }
 }
-

@@ -1,48 +1,45 @@
 package com.tafakkoor.e_learn.controller;
 
+import com.tafakkoor.e_learn.domain.AuthUser;
 import com.tafakkoor.e_learn.domain.Token;
 import com.tafakkoor.e_learn.dto.UserRegisterDTO;
-import com.tafakkoor.e_learn.domain.AuthUser;
 import com.tafakkoor.e_learn.enums.Status;
 import com.tafakkoor.e_learn.repository.AuthUserRepository;
 import com.tafakkoor.e_learn.repository.TokenRepository;
-import com.tafakkoor.e_learn.utils.Container;
-import com.tafakkoor.e_learn.utils.TokenGenerator;
-import com.tafakkoor.e_learn.utils.Util;
-import com.tafakkoor.e_learn.utils.mail.EmailService;
+import com.tafakkoor.e_learn.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 @Controller
 @RequestMapping( "/auth" )
 public class AuthController {
     private final AuthUserRepository authUserRepository;
+    private final UserService userService;
 
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthController( AuthUserRepository authUserRepository, TokenRepository tokenRepository, PasswordEncoder passwordEncoder ) {
+    public AuthController(AuthUserRepository authUserRepository, UserService userService, TokenRepository tokenRepository, PasswordEncoder passwordEncoder ) {
+        System.out.println("MAnguberdi");
         this.authUserRepository = authUserRepository;
+        this.userService = userService;
         this.tokenRepository = tokenRepository;
         this.passwordEncoder = passwordEncoder;
 
     }
 
     @GetMapping( "/register" )
-    public ModelAndView registerPage() {
-        var mav = new ModelAndView();
-        mav.setViewName("auth/register");
-        return mav;
+    public String registerPage(Model model) {
+        model.addAttribute("auth_user", new AuthUser());
+        return "auth/register";
     }
 
     @GetMapping( "/login" )
@@ -63,7 +60,6 @@ public class AuthController {
 
     @PostMapping( "/register" )
     public String register( @Valid @ModelAttribute UserRegisterDTO dto, BindingResult result ) {
-
         if ( result.hasErrors() ) {
             return "auth/register";
         }
@@ -73,39 +69,8 @@ public class AuthController {
             return "auth/register";
         }
 
-        AuthUser authUser = AuthUser.builder()
-                .username(dto.username())
-                .password(passwordEncoder.encode(dto.password()))
-                .email(dto.email())
-                .build();
+        userService.saveUserAndSendEmail(dto);
 
-        authUserRepository.save(authUser);
-
-        String token = TokenGenerator.generateToken();  // TODO: 3/12/23 encrypt token
-        String email = authUser.getEmail();
-
-        String link = Container.BASE_URL + "auth/activate?token=" + token;
-
-        String body = """
-                Subject: Activate Your Account
-                                
-                Dear %s,
-                                
-                Thank you for registering on our website. To activate your account, please click on the following link:
-                                
-                %s
-                                
-                If you have any questions or need assistance, please contact us at [SUPPORT_EMAIL OR TELEGRAM_BOT].
-                                
-                Best regards,
-                E-Learn LTD.
-                """.formatted(dto.username(), link);
-
-        Token token1 = Util.getInstance().buildToken(token, authUser);
-
-        tokenRepository.save(token1);
-
-        CompletableFuture.runAsync(() -> EmailService.getInstance().sendActivationToken(email, body, "Activate Email"));
         return "auth/verify_email";
     }
 
