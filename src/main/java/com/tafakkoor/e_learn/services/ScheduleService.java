@@ -25,7 +25,7 @@ public class ScheduleService {
         List<AuthUser> users = authUserRepository.findByLastLoginBefore(LocalDateTime.now().plusDays(3));
         EmailService emailService = EmailService.getInstance();
         for ( AuthUser user : users ) {
-            CompletableFuture.runAsync(() -> emailService.sentEmailToInactiveUsers(user.getEmail(),
+            CompletableFuture.runAsync(() -> emailService.sendEmail(user.getEmail(),
                     Util.getInstance().generateBodyForInactiveUsers(user.getUsername())
                     ,"Login to Your Account"));
         }
@@ -43,8 +43,16 @@ public class ScheduleService {
     }
 
     // schedule for a task to be executed every day at 12:00 am
-    @Scheduled(cron = "0 0 0 * * *")
-    public void sendBirthdayEmails() { // TODO: 3/12/23  // send email to users that have birthday today
-        System.out.println("scheduled task is running");
+    @Scheduled(cron = "0 0 12 * * *")
+    public void sendBirthdayEmails() { // done
+        EmailService emailService = EmailService.getInstance();
+
+        List<AuthUser> users = authUserRepository.findAllByBirtDate(LocalDateTime.now());
+        for ( AuthUser user : users ) {
+            CompletableFuture.runAsync(() -> emailService.sendEmail(user.getEmail(),
+                    Util.getInstance().generateBodyForBirthDay(user.getUsername())
+                    ,"Happy Birthday"));
+        }
+
     }
 }

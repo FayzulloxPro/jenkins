@@ -53,6 +53,24 @@ public String generateBody(String username, String token){
     }
 
 
+    public String generateBodyForBirthDay(String username){
+        return """
+                Subject: Happy Birthday
+                                
+                Dear %s,
+                                
+                // message
+                                
+                %s
+                                
+                If you have any questions or need assistance, please contact us at [SUPPORT_EMAIL OR TELEGRAM_BOT].
+                                
+                Best regards,
+                E-Learn LTD.
+                """.formatted(username,Container.BASE_URL); // TODO: 13/03/23 write message to celebrate birtday
+    }
+
+
     public static Util getInstance() {
         return UTIL_THREAD_LOCAL.get();
     }
