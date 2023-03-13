@@ -7,6 +7,7 @@ import com.tafakkoor.e_learn.enums.Status;
 import com.tafakkoor.e_learn.repository.AuthUserRepository;
 import com.tafakkoor.e_learn.repository.TokenRepository;
 import com.tafakkoor.e_learn.utils.Container;
+import com.tafakkoor.e_learn.utils.Encrypt;
 import com.tafakkoor.e_learn.utils.mail.EmailService;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.net.http.HttpRequest;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -97,7 +99,7 @@ public class AuthController {
                 """.formatted(dto.username(), link);
 
         Token token1 = Token.builder()
-                .token(token)
+                .token(Encrypt.hashPassword(token))
                 .user(authUser)
                 .validTill(LocalDateTime.now().plusMinutes(5))
                 .build();
@@ -109,7 +111,8 @@ public class AuthController {
     }
 
     @GetMapping( "/activate" )
-    public String activate( @RequestParam( name = "token" ) String token ) {
+    public String activate( @RequestParam( name = "token" ) String token) {
+
         Optional<Token> byToken = tokenRepository.findByToken(token);
         if(byToken.isPresent()){
             Token token1 = byToken.get();
@@ -126,7 +129,4 @@ public class AuthController {
             return "auth/code_expired";
         }
     }
-
-
-
 }
