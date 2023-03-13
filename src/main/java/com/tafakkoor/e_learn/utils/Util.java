@@ -34,6 +34,25 @@ public String generateBody(String username, String token){
 }
 
 
+
+    public String generateBodyForInactiveUsers(String username){
+        return """
+                Subject: Login to Your Account
+                                
+                Dear %s,
+                                
+                // message
+                                
+                %s
+                                
+                If you have any questions or need assistance, please contact us at [SUPPORT_EMAIL OR TELEGRAM_BOT].
+                                
+                Best regards,
+                E-Learn LTD.
+                """.formatted(username,Container.BASE_URL); // TODO: 13/03/23 write message to users that 3 days inactive
+    }
+
+
     public static Util getInstance() {
         return UTIL_THREAD_LOCAL.get();
     }

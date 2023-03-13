@@ -39,6 +39,38 @@ public class EmailService {
         }
     }
 
+
+
+
+    public void sentEmailToInactiveUsers( String email, String body, String subject) {
+        String from = "strengthnumberone@gmail.com";
+        String host = "smtp.gmail.com";
+
+        Properties properties = System.getProperties();
+        properties.put("mail.smtp.host", host);
+        properties.put("mail.smtp.port", "465");
+        properties.put("mail.smtp.ssl.enable", "true");
+        properties.put("mail.smtp.auth", "true");
+
+        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("strengthnumberone@gmail.com", "qkqcmsawjhlwezlg");
+            }
+        });
+
+        try {
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(from));
+
+            message.addRecipient(javax.mail.Message.RecipientType.TO, new InternetAddress(email));
+            message.setSubject(subject);
+            message.setText(body);
+            Transport.send(message);
+        } catch (MessagingException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static EmailService getInstance() {
         return EMAIL_SERVICE_THREAD_LOCAL.get();
     }
