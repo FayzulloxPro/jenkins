@@ -17,6 +17,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        EmailService.send("dilgan0819@gmail.com", "Test", "daffafa");
+//        EmailService.send("dilgan0819@gmail.com", "Test", "daffafa");
     }
 }
