@@ -17,6 +17,8 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        System.out.println(TokenGenerator.generateToken());
 //        EmailService.send("dilgan0819@gmail.com", "Test", "daffafa");
     }
+
 }

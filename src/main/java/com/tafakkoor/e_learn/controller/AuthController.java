@@ -7,6 +7,8 @@ import com.tafakkoor.e_learn.enums.Status;
 import com.tafakkoor.e_learn.repository.AuthUserRepository;
 import com.tafakkoor.e_learn.repository.TokenRepository;
 import com.tafakkoor.e_learn.utils.Container;
+import com.tafakkoor.e_learn.utils.TokenGenerator;
+import com.tafakkoor.e_learn.utils.Util;
 import com.tafakkoor.e_learn.utils.mail.EmailService;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -61,25 +63,28 @@ public class AuthController {
 
     @PostMapping( "/register" )
     public String register( @Valid @ModelAttribute UserRegisterDTO dto, BindingResult result ) {
+
         if ( result.hasErrors() ) {
             return "auth/register";
         }
+
         if ( !dto.password().equals(dto.confirmPassword()) ) {
             result.rejectValue("confirmPassword", "", "Passwords do not match");
             return "auth/register";
         }
+
         AuthUser authUser = AuthUser.builder()
                 .username(dto.username())
                 .password(passwordEncoder.encode(dto.password()))
                 .email(dto.email())
                 .build();
+
         authUserRepository.save(authUser);
 
-        String token = UUID.randomUUID().toString();  // TODO: 3/12/23 encrypt token
+        String token = TokenGenerator.generateToken();  // TODO: 3/12/23 encrypt token
         String email = authUser.getEmail();
 
         String link = Container.BASE_URL + "auth/activate?token=" + token;
-        System.out.println(link);
 
         String body = """
                 Subject: Activate Your Account
@@ -96,11 +101,7 @@ public class AuthController {
                 E-Learn LTD.
                 """.formatted(dto.username(), link);
 
-        Token token1 = Token.builder()
-                .token(token)
-                .user(authUser)
-                .validTill(LocalDateTime.now().plusMinutes(5))
-                .build();
+        Token token1 = Util.getInstance().buildToken(token, authUser);
 
         tokenRepository.save(token1);
 
