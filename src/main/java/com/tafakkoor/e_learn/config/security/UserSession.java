@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
 @Component
-@RequestScope
+@Scope("prototype")
 public class UserSession {
     public AuthUser getUser() {
         SecurityContext context = SecurityContextHolder.getContext();

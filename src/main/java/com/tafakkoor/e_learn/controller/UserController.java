@@ -1,6 +1,7 @@
 package com.tafakkoor.e_learn.controller;
 
 import com.tafakkoor.e_learn.config.security.UserSession;
+import com.tafakkoor.e_learn.domain.AuthUser;
 import com.tafakkoor.e_learn.enums.Levels;
 import com.tafakkoor.e_learn.services.UserService;
 import org.springframework.stereotype.Controller;
@@ -38,7 +39,8 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("userLevel", userSession.getLevel());
         modelAndView.setViewName("user/levelsGrammar");
-        List<Levels> levelsList=userService.getLevels(userSession.getLevel());
+        AuthUser user=userService.getUser(userSession.getId());
+        List<Levels> levelsList=userService.getLevels(user.getLevel());
         modelAndView.addObject("levels", levelsList);
         return modelAndView;
     }
