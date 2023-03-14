@@ -51,12 +51,12 @@ public class UserService {
 
     public void saveUserAndSendEmail(UserRegisterDTO dto) {
         AuthUser user = AuthUser.builder()
-                .username(dto.username())
-                .password(passwordEncoder.encode(dto.password()))
-                .email(dto.email())
+                .username(dto.getUsername())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .email(dto.getEmail())
                 .build();
-        sendActivationEmail(user);
         userRepository.save(user);
+        sendActivationEmail(user);
     }
 
     public void sendActivationEmail(AuthUser authUser) {

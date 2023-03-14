@@ -7,4 +7,5 @@ public class WebApplicationInitializer extends AbstractSecurityWebApplicationIni
     protected boolean enableHttpSessionEventPublisher() {
         return true;
     }
+
 }

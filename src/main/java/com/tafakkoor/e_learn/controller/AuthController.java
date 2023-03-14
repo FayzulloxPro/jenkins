@@ -37,7 +37,7 @@ public class AuthController {
 
     @GetMapping( "/register" )
     public String registerPage(Model model) {
-        model.addAttribute("auth_user", new AuthUser());
+        model.addAttribute("dto", new UserRegisterDTO());
         return "auth/register";
     }
 
@@ -63,7 +63,7 @@ public class AuthController {
             return "auth/register";
         }
 
-        if ( !dto.password().equals(dto.confirmPassword()) ) {
+        if ( !dto.getPassword().equals(dto.getConfirmPassword()) ) {
             result.rejectValue("confirmPassword", "", "Passwords do not match");
             return "auth/register";
         }
@@ -82,7 +82,6 @@ public class AuthController {
                 AuthUser user = token1.getUser();
                 user.setStatus(Status.ACTIVE);
                 authUserRepository.save(user);
-                System.out.println(user);
                 return "auth/code_activated";
             } else {
                 return "auth/code_expired";

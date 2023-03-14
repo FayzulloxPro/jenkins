@@ -1,200 +1,151 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: head(~{::title},~{::link})}">
+<head>
+    <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="/css/login.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <style>
-        .switch {
-            --button-width: 3.5em;
-            --button-height: 2em;
-            --toggle-diameter: 1.5em;
-            --button-toggle-offset: calc((var(--button-height) - var(--toggle-diameter)) / 2);
-            --toggle-shadow-offset: 10px;
-            --toggle-wider: 3em;
-            --color-grey: #cccccc;
-            --color-green: #4296f4;
-        }
-
-        .slider {
-            display: inline-block;
-            width: var(--button-width);
-            height: var(--button-height);
-            background-color: var(--color-grey);
-            border-radius: calc(var(--button-height) / 2);
-            position: relative;
-            transition: 0.3s all ease-in-out;
-        }
-
-        .slider::after {
-            content: "";
-            display: inline-block;
-            width: var(--toggle-diameter);
-            height: var(--toggle-diameter);
-            background-color: #fff;
-            border-radius: calc(var(--toggle-diameter) / 2);
-            position: absolute;
-            top: var(--button-toggle-offset);
-            transform: translateX(var(--button-toggle-offset));
-            box-shadow: var(--toggle-shadow-offset) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
-            transition: 0.3s all ease-in-out;
-        }
-
-        .switch input[type="checkbox"]:checked + .slider {
-            background-color: var(--color-green);
-        }
-
-        .switch input[type="checkbox"]:checked + .slider::after {
-            transform: translateX(calc(var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)));
-            box-shadow: calc(var(--toggle-shadow-offset) * -1) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
-        }
-
-        .switch input[type="checkbox"] {
-            display: none;
-        }
-
-        .switch input[type="checkbox"]:active + .slider::after {
-            width: var(--toggle-wider);
-        }
-
-        .switch input[type="checkbox"]:checked:active + .slider::after {
-            transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)));
-        }
-
-    </style>
+  <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
 <form method="post" th:action="@{/auth/login}">
-    <div id="container" class="container">
-        <!-- FORM SECTION -->
-        <div class="row">
-            <!-- SIGN UP -->
-            <div class="col align-items-center flex-col sign-up">
-                <div class="form-wrapper align-items-center">
-                    <div class="form sign-up">
-                        <div class="input-group">
-                            <i class='bx bxs-user'></i>
-                            <input type="text">
-                        </div>
-                        <div class="input-group">
-                            <i class='bx bx-mail-send'></i>
-
-                            <input type="email">
-
-                        </div>
-                        <div class="input-group">
-                            <i class='bx bxs-lock-alt'></i>
-
-                            <div id="passwordInput">
-                                <input type="password">
-                                <span id="showHide">SHOW</span>
-                            </div>
-                            <div id="passwordStrength">
-                                <span id="poor"></span>
-                                <span id="weak"></span>
-                                <span id="strong"></span>
-                            </div>
-                            <div id="passwordInfo"></div>
-
-                        </div>
-                        <div class="input-group">
-                            <i class='bx bxs-lock-alt'></i>
-                            <input type="password">
-                        </div>
-                        <div>
-                            <button type="submit">
-                                Sign up
-                            </button>
-                        </div>
-                        <p>
+<div id="container" class="container">
+  <!-- FORM SECTION -->
+  <div class="row">
+    <!-- SIGN UP -->
+    <div class="col align-items-center flex-col sign-up">
+      <div class="form-wrapper align-items-center">
+        <div class="form sign-up">
+          <div class="input-group">
+            <i class='bx bxs-user'></i>
+            <input type="text" placeholder="Username" >
+          </div>
+          <div class="input-group">
+            <i class='bx bx-mail-send'></i>
+            <input type="email" placeholder="Email">
+          </div>
+          <div class="input-group">
+            <i class='bx bxs-lock-alt'></i>
+            <input type="password" placeholder="Password">
+          </div>
+          <div class="input-group">
+            <i class='bx bxs-lock-alt'></i>
+            <input type="password" placeholder="Confirm password">
+          </div>
+          <button>
+            Sign up
+          </button>
+          <p>
 							<span>
 								Already have an account?
 							</span>
-                            <b onclick="toggle()" class="pointer">
-                                Sign in here
-                            </b>
-                        </p>
-                    </div>
-                </div>
+            <b onclick="toggle()" class="pointer">
+              Sign in here
+            </b>
+          </p>
+        </div>
+      </div>
 
+    </div>
+    <!-- END SIGN UP -->
+    <!-- SIGN IN -->
+    <div class="col align-items-center flex-col sign-in">
+      <div class="form-wrapper align-items-center">
+        <div class="form sign-in">
+          <div style="color: red" th:if="${error}">
+            <snap class="small text-left" th:text="${error}"></snap>
+          </div>
+          <div class="input-group">
+            <i class='bx bxs-user'></i>
+            <input type="text" placeholder="Username" id="username" name="uname">
+          </div>
+          <div class="input-group">
+            <i class='bx bxs-lock-alt'></i>
+            <input type="password" placeholder="Password" id="password" name="pswd">
+          </div>
+          <button type="submit">
+            Sign in
+          </button>
+          <div>
+            <div style="display: inline-block; margin-top: 15px; width: 135px">
+              <button href="#" onclick="location.href=''">
+                <i class="fa fa-facebook fa-fw"></i> Facebook
+              </button>
             </div>
-            <!-- END SIGN UP -->
-            <!-- SIGN IN -->
-            <div class="col align-items-center flex-col sign-in">
-                <div class="form-wrapper align-items-center">
-                    <div class="form sign-in ">
-                        <div style="color: red" th:if="${error}">
-                            <snap class="small text-left" th:text="${error}"></snap>
-                        </div>
-                        <div class="input-group">
-                            <i class='bx bxs-user'></i>
-                            <input type="text" id="username" name="uname" placeholder="Username">
-                        </div>
-
-
-                        <div class="input-group">
-                            <i class='bx bxs-lock-alt'></i>
-                            <input type="password" id="password" name="pswd" placeholder="Password">
-                        </div>
-
-
-<!--                                                            <div>-->
-<!--                                                                <div class="primary-switch">-->
-<!--                                                                      <h6 class="text-center" style="color: black">Remember me</h6>-->
-<!--                                                                      <i class='bx bxs-user'></i>-->
-<!--                                                                      <input type="checkbox" id="rememberMe" checked name="rememberMe">-->
-<!--                                                                      <label for="rememberMe"><br></label>-->
-<!--                                                                  </div>-->
-<!--                                                            </div>-->
-                        <label class="switch">
-                            <input type="checkbox" id="rememberMe" name="rememberMe">
-                            <span class="slider"></span>
-                        </label>
-
-
-                        <div>
-                            <button type="submit">
-                                Sign in
-                            </button>
-                        </div>
-                        <p>
+            <div style="display: inline-block; margin-top: 15px; width: 135px">
+              <button href="/oauth2/authorization/google" type="button">
+                <i class="fa fa-google fa-fw"></i> Google
+              </button>
+            </div>
+            <div style="display: inline-block; margin-top: 15px; width: 135px">
+              <button href="#" onclick="location.href=''">
+                <i class="fa fa-github fa-fw"></i>   Github
+              </button>
+            </div>
+          </div>
+          <p>
+            <b>
+              Forgot password?
+            </b>
+          </p>
+          <p>
 							<span>
 								Don't have an account?
 							</span>
-                            <b class="pointer">
-                                <a th:href="@{/auth/register}">Sign up here</a>
-                            </b>
-                        </p>
-                    </div>
-
-                </div>
-                <div class="form-wrapper">
-
-                </div>
-            </div>
-            <!-- END SIGN IN -->
+            <b onclick="location.href='/auth/register'" class="pointer">
+              Sign up here
+            </b>
+          </p>
         </div>
-        <!-- END FORM SECTION -->
-        <!-- CONTENT SECTION -->
-        <div class="row content-row">
-            <!-- SIGN IN CONTENT -->
-            <div class="col align-items-center flex-col">
-                <div class="text sign-in">
-                    <h2 style="color: white">
-                        Welcome!
-                    </h2>
+      </div>
+      <div class="form-wrapper">
 
-                </div>
-                <div class="img sign-in">
-
-                </div>
-            </div>
-            <!-- END SIGN IN CONTENT -->
-        </div>
-        <!-- END CONTENT SECTION -->
+      </div>
     </div>
+    <!-- END SIGN IN -->
+  </div>
+  <!-- END FORM SECTION -->
+  <!-- CONTENT SECTION -->
+  <div class="row content-row">
+    <!-- SIGN IN CONTENT -->
+    <div class="col align-items-center flex-col">
+      <div class="text sign-in">
+        <h2>
+          Welcome
+        </h2>
+
+      </div>
+      <div class="img sign-in">
+
+      </div>
+    </div>
+    <!-- END SIGN IN CONTENT -->
+    <!-- SIGN UP CONTENT -->
+    <div class="col align-items-center flex-col">
+      <div class="img sign-up">
+
+      </div>
+      <div class="text sign-up">
+        <h2>
+          Join with us
+        </h2>
+
+      </div>
+    </div>
+    <!-- END SIGN UP CONTENT -->
+  </div>
+  <!-- END CONTENT SECTION -->
+</div>
 </form>
-<script src="/js/login.js"></script>
+<script>
+  let container = document.getElementById('container');
+
+  toggle = () => {
+    container.classList.toggle('sign-in');
+    container.classList.toggle('sign-up');
+  }
+
+  setTimeout(() => {
+    container.classList.add('sign-in');
+  }, 200);
+</script>
 </body>
 </html>
