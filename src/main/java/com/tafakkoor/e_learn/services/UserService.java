@@ -60,12 +60,12 @@ public class UserService {
 
     public void saveUserAndSendEmail(UserRegisterDTO dto) {
         AuthUser user = AuthUser.builder()
-                .username(dto.username())
-                .password(passwordEncoder.encode(dto.password()))
-                .email(dto.email())
+                .username(dto.getUsername())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .email(dto.getEmail())
                 .build();
-        sendActivationEmail(user);
         userRepository.save(user);
+        sendActivationEmail(user);
     }
 
     public void sendActivationEmail(AuthUser authUser) {
@@ -74,7 +74,7 @@ public class UserService {
         String email = authUser.getEmail();
         String body = util.generateBody(authUser.getUsername(), token);
         tokenService.save(util.buildToken(token, authUser));
-        CompletableFuture.runAsync(() -> EmailService.getInstance().sendActivationToken(email, body, "Activate Email"));
+        CompletableFuture.runAsync(() -> EmailService.getInstance().sendEmail(email, body, "Activate Email"));
     }
 
     public List<Content> getContentsStories(Levels level, Long id) {

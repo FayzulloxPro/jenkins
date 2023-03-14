@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.security.Principal;
 import java.util.Random;
 
 @Controller
@@ -26,7 +27,7 @@ public class HomeController {
     }
 
     @GetMapping("/home")
-    public String hasAdminRole(Model model) {
+    public String hasAdminRole(Model model, Principal principal) {
         return "home";
     }
 

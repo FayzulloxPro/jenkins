@@ -10,8 +10,6 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -24,24 +22,24 @@ public class AuthUser extends Auditable {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private Image image;
-    @NotBlank(message = "Username cannot be blank")
-    @Pattern(regexp="^\\S+$", message="Username cannot contain whitespace")
-    @Pattern(regexp="^[a-zA-Z0-9_]{3,15}$", message="Invalid username")
+//    @NotBlank(message = "Username cannot be blank")
+//    @Pattern(regexp="^\\S+$", message="Username cannot contain whitespace")
+//    @Pattern(regexp="^[a-zA-Z0-9_]{3,15}$", message="Invalid username")
     @Column(unique = true, nullable = false)
     private String username;
-    @NotBlank(message = "Password cannot be blank")
-    @Pattern(regexp="^\\S+$", message="Password cannot contain whitespace")
-    @Pattern(regexp="^(?=.*[0-9])(?=.*[a-z]).{8,}$", message="Choose a stronger password")
+//    @NotBlank(message = "Password cannot be blank")
+//    @Pattern(regexp="^\\S+$", message="Password cannot contain whitespace")
+//    @Pattern(regexp="^(?=.*[0-9])(?=.*[a-z]).{8,}$", message="Choose a stronger password")
     @Column(nullable = false)
     private String password;
-    @NotBlank(message = "First name cannot be blank")
-    @Pattern(regexp="^[a-zA-Z]{2,30}$", message="Invalid first name")
+//    @NotBlank(message = "First name cannot be blank")
+//    @Pattern(regexp="^[a-zA-Z]{2,30}$", message="Invalid first name")
     private String firstName;
-    @NotBlank(message = "Last name cannot be blank")
-    @Pattern(regexp="^[a-zA-Z]{2,30}$", message="Invalid last name")
+//    @NotBlank(message = "Last name cannot be blank")
+//    @Pattern(regexp="^[a-zA-Z]{2,30}$", message="Invalid last name")
     private String lastName;
-    @NotBlank(message = "Email cannot be blank")
-    @Pattern(regexp="^[A-Za-z0-9+_.-]+@(.+)$", message="Invalid email")
+//    @NotBlank(message = "Email cannot be blank")
+//    @Pattern(regexp="^[A-Za-z0-9+_.-]+@(.+)$", message="Invalid email")
     @Column(unique = true, nullable = false)
     private String email;
 

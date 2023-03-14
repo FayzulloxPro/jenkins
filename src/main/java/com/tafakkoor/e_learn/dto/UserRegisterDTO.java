@@ -1,4 +1,15 @@
 package com.tafakkoor.e_learn.dto;
 
-public record UserRegisterDTO(String username, String password, String confirmPassword, String email) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class UserRegisterDTO {
+    private String username;
+    private String password;
+    private String confirmPassword;
+    private String email;
 }
