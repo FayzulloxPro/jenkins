@@ -2,6 +2,16 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <style>
+        .wrapper {
+            width: 800px;
+            margin: 150px auto;
+            padding: 20px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0px 10px 40px 0px rgba(47, 47, 47, .1);
+        }
+    </style>
     <link rel="stylesheet" href="/css/bootstrap.min.css">    <title>Stories</title>
 </head>
 <body>
@@ -10,7 +20,9 @@
     <a href="/practise/story" class="btn btn-primary" style="margin-left: fill"> Back </a>
 </div>
 <br><br>
-<h1 th:if="${stories.size()==0}">There are no stories found!</h1>
+<div th:if="${stories.size()==0}" class="wrapper" style="background-color: palevioletred">
+    <h1 style="text-align: center">There are no stories found!</h1>
+</div>
 <div th:unless="${stories.size()==0}">
     <h1 style="text-align: center; background-color: #20c997; border-radius: 20px" class="container">Stories</h1>
     <table style="border-radius: 5px" class="table table-striped container">

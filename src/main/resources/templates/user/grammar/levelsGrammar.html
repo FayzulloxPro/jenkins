@@ -39,7 +39,7 @@
             </thead>
             <tr th:each="level:${levels}">
                 <td th:href="@{'/practise/grammar/'+${level}}" th:text="${level}"></td>
-                <td><a class="btn btn-primary" th:href="@{'/levels/grammar/'+${level}}">View</a></td>
+                <td><a class="btn btn-primary" th:href="@{'/practise/grammar/'+${level}}">View</a></td>
             </tr>
         </tbody>
     </table>

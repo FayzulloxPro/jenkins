@@ -14,11 +14,15 @@ import com.tafakkoor.e_learn.repository.UserContentRepository;
 import com.tafakkoor.e_learn.utils.Util;
 import com.tafakkoor.e_learn.utils.mail.EmailService;
 import lombok.NonNull;
+import org.aspectj.lang.annotation.Before;
+import org.hibernate.annotations.SelectBeforeUpdate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -77,17 +81,24 @@ public class UserService {
         CompletableFuture.runAsync(() -> EmailService.getInstance().sendEmail(email, body, "Activate Email"));
     }
 
+
     public List<Content> getContentsStories(Levels level, Long id) {
         if (checkUserStatus(id)) {
             return null;
         }
-
         return contentRepository.findByLevelAndContentTypeAndDeleted(level, ContentType.STORY, false);
-
     }
+
 
     private boolean checkUserStatus(Long id) {
         List<UserContent> userContents = userContentRepository.findByUserIdAndProgress(id, Progress.IN_PROGRESS);
         return userContents.size() > 0;
+    }
+
+    public List<Content> getContentsGrammar(Levels level, Long id) {
+        if (checkUserStatus(id)) {
+            return null;
+        }
+        return contentRepository.findByLevelAndContentTypeAndDeleted(level, ContentType.GRAMMAR, false);
     }
 }
