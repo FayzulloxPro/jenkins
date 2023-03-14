@@ -34,7 +34,6 @@ public class AuthUserUserDetailsService implements UserDetailsService {
         throw new UsernameNotFoundException("Bad Credentials");
     }
 
-
     public void save(AuthUser authUser) {
         authUserRepository.save(authUser);
     }

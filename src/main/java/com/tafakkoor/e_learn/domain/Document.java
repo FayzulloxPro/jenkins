@@ -4,8 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.*;
 
-import java.security.SecureRandom;
-
 @Getter
 @Setter
 @ToString
