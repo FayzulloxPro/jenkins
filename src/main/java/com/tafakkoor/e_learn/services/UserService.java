@@ -1,10 +1,16 @@
 package com.tafakkoor.e_learn.services;
 
 import com.tafakkoor.e_learn.domain.AuthUser;
+import com.tafakkoor.e_learn.domain.Content;
+import com.tafakkoor.e_learn.domain.UserContent;
 import com.tafakkoor.e_learn.dto.UserRegisterDTO;
+import com.tafakkoor.e_learn.enums.ContentType;
 import com.tafakkoor.e_learn.enums.Levels;
+import com.tafakkoor.e_learn.enums.Progress;
 import com.tafakkoor.e_learn.repository.AuthUserRepository;
+import com.tafakkoor.e_learn.repository.ContentRepository;
 import com.tafakkoor.e_learn.repository.TokenRepository;
+import com.tafakkoor.e_learn.repository.UserContentRepository;
 import com.tafakkoor.e_learn.utils.Util;
 import com.tafakkoor.e_learn.utils.mail.EmailService;
 import lombok.NonNull;
@@ -20,12 +26,15 @@ public class UserService {
     private final AuthUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final UserContentRepository userContentRepository;
+    private final ContentRepository contentRepository;
 
-    public UserService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, TokenService tokenService) {
+    public UserService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, TokenService tokenService, UserContentRepository userContentRepository, ContentRepository contentRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-
         this.tokenService = tokenService;
+        this.userContentRepository = userContentRepository;
+        this.contentRepository = contentRepository;
     }
 
     public List<Levels> getLevels(@NonNull Levels level) {
@@ -66,5 +75,19 @@ public class UserService {
         String body = util.generateBody(authUser.getUsername(), token);
         tokenService.save(util.buildToken(token, authUser));
         CompletableFuture.runAsync(() -> EmailService.getInstance().sendActivationToken(email, body, "Activate Email"));
+    }
+
+    public List<Content> getContentsStories(Levels level, Long id) {
+        if (checkUserStatus(id)) {
+            return null;
+        }
+
+        return contentRepository.findByLevelAndContentTypeAndDeleted(level, ContentType.STORY, false);
+
+    }
+
+    private boolean checkUserStatus(Long id) {
+        List<UserContent> userContents = userContentRepository.findByUserIdAndProgress(id, Progress.IN_PROGRESS);
+        return userContents.size() > 0;
     }
 }

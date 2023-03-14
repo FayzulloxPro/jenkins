@@ -2,6 +2,7 @@ package com.tafakkoor.e_learn.controller;
 
 import com.tafakkoor.e_learn.config.security.UserSession;
 import com.tafakkoor.e_learn.domain.AuthUser;
+import com.tafakkoor.e_learn.domain.Content;
 import com.tafakkoor.e_learn.enums.Levels;
 import com.tafakkoor.e_learn.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -67,20 +67,21 @@ public class UserController {
         return "redirect:/test";
     }
 
-    @GetMapping("/practise/grammar/{level}")
-    public ModelAndView testGrammar(@PathVariable String level) {
-        System.out.println("level = " + level);
+    @GetMapping("/practise/story/{level}")
+    public ModelAndView testStory(@PathVariable String level) {
         ModelAndView modelAndView = new ModelAndView();
+        Levels levels=null;
         try {
-            Levels levels = Levels.valueOf(level.toUpperCase());
+            levels = Levels.valueOf(level.toUpperCase());
         }catch (Exception e){
-            modelAndView.addObject("levelNotFound" , "Level not found named "+level);
-
-            modelAndView.setViewName("redirect:/practise/grammar");
+            modelAndView.addObject("levelNotFound" , "Level not found named %s".formatted(level.toUpperCase()));
+            modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
         }
-        modelAndView.setViewName("user/testGrammar");
-        modelAndView.addObject("level", level);
+        List<Content> contents = userService.getContentsStories(levels, userSession.getId());
+        contents.forEach(System.out::println);
+        modelAndView.setViewName("user/Stories");
+        modelAndView.addObject("stories", contents);
         return modelAndView;
     }
 

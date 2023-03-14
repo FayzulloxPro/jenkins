@@ -17,8 +17,8 @@
 </head>
 <body style="background-color: #e9ecef">
 <br><br><br>
-<div class="wrapper" style="background-color: palevioletred" >
-    <h1 th:value="${levelNotFound}"></h1>
+<div style="margin-left: 10%">
+    <a href="/practise" class="btn btn-primary" style="margin-left: fill"> Back </a>
 </div>
 
 <div class="wrapper" th:if="${levels.size()==0}">
@@ -38,11 +38,9 @@
                 </tr>
             </thead>
             <tr th:each="level:${levels}">
-                <td th:href="@{'/levels/grammar/'+${level}}" th:text="${level}"></td>
+                <td th:href="@{'/practise/grammar/'+${level}}" th:text="${level}"></td>
                 <td><a class="btn btn-primary" th:href="@{'/levels/grammar/'+${level}}">View</a></td>
             </tr>
-
-
         </tbody>
     </table>
 </div>
