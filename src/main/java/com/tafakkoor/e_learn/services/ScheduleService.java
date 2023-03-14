@@ -15,9 +15,15 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class ScheduleService {
 
-    AuthUserRepository authUserRepository;
+    private final AuthUserRepository authUserRepository;
 
-    TokenRepository tokenRepository;
+    private final TokenRepository tokenRepository;
+
+
+    public ScheduleService( AuthUserRepository authUserRepository, TokenRepository tokenRepository ) {
+        this.authUserRepository = authUserRepository;
+        this.tokenRepository = tokenRepository;
+    }
 
     // send email to user that have not logged in for 3 days
     @Scheduled( fixedRate = 1000 * 60 * 60 * 24 ) // 1 day
@@ -33,12 +39,12 @@ public class ScheduleService {
     }
 
 
-    @Scheduled( fixedRate = ( 1000 * 60 * 10 + 30 * 1000 ) ) //  10.5 minutes
+    @Scheduled( fixedRate = ( 1000 * 60 * 10 ) ) //  10 minutes
     public void deleteExpiredTokens() { // done
-        tokenRepository.deleteByValidTillBefore(LocalDateTime.now());
+        tokenRepository.deleteByCreatedAtBefore();
     }
 
-    @Scheduled( fixedRate = 1000 * 60 * 6 ) // 6 MINUTE
+    @Scheduled( fixedRate = 1000 * 60 * 10 ) // 10 MINUTE
     public void deleteInactiveUsers() {   // done
         authUserRepository.deleteByStatusInActive();
     }

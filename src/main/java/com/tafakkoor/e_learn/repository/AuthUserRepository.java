@@ -1,12 +1,10 @@
 package com.tafakkoor.e_learn.repository;
 
 import com.tafakkoor.e_learn.domain.AuthUser;
-import com.tafakkoor.e_learn.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +13,7 @@ import java.util.Optional;
 public interface AuthUserRepository extends JpaRepository<AuthUser, String> {
 
     @Modifying
-    @Query( "DELETE FROM AuthUser a WHERE a.status = 1 AND a.createdAt < NOW() - INTERVAL('6 minutes')" )
+    @Query( "DELETE FROM AuthUser a WHERE a.status = 1 AND a.createdAt < NOW() - INTERVAL('10 minutes')" )
     int deleteByStatusInActive();
     List<AuthUser> findByLastLoginBefore( LocalDateTime lastLogin );
 
