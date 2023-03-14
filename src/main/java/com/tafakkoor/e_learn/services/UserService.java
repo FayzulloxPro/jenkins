@@ -65,6 +65,6 @@ public class UserService {
         String email = authUser.getEmail();
         String body = util.generateBody(authUser.getUsername(), token);
         tokenService.save(util.buildToken(token, authUser));
-        CompletableFuture.runAsync(() -> EmailService.getInstance().sendActivationToken(email, body, "Activate Email"));
+        CompletableFuture.runAsync(() -> EmailService.getInstance().sendEmail(email, body, "Activate Email"));
     }
 }

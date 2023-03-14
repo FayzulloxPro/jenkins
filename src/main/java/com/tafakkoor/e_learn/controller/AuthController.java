@@ -28,6 +28,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     public AuthController(AuthUserRepository authUserRepository, UserService userService, TokenRepository tokenRepository, PasswordEncoder passwordEncoder ) {
+        System.out.println("MAnguberdi");
         this.authUserRepository = authUserRepository;
         this.userService = userService;
         this.tokenRepository = tokenRepository;
