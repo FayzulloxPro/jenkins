@@ -15,8 +15,7 @@ import java.util.Optional;
 public interface AuthUserRepository extends JpaRepository<AuthUser, String> {
 
     @Modifying
-    @Query( "update AuthUser a set a.deleted = true where a.status = 1" )
-        // TODO: 13/03/23 hard delete or soft delete
+    @Query( "DELETE FROM AuthUser a WHERE a.status = 1 AND a.createdAt < NOW() - INTERVAL('6 minutes')" )
     int deleteByStatusInActive();
     List<AuthUser> findByLastLoginBefore( LocalDateTime lastLogin );
 

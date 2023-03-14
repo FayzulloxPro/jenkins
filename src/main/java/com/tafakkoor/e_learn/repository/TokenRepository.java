@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface TokenRepository extends JpaRepository<Token, AuthUser> {
-        @Transactional
-        @Modifying
-        @Query( "update Token t set t.deleted = true where t.validTill < :validTill" )
-        void deleteByValidTillBeforeAllIgnoreCase( LocalDateTime validTill );
-        long deleteByValidTillBefore( LocalDateTime validTill );
+
+
+        @Query( "delete from Token t where t.validTill < :validTill" )
+        void deleteByValidTillBefore( LocalDateTime validTill );
+
         Optional<Token> findByUser(AuthUser user);
         Optional<Token> findByToken(String token);
 

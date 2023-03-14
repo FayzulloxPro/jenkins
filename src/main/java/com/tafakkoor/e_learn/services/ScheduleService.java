@@ -20,30 +20,31 @@ public class ScheduleService {
     TokenRepository tokenRepository;
 
     // send email to user that have not logged in for 3 days
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 24) // 1 day
+    @Scheduled( fixedRate = 1000 * 60 * 60 * 24 ) // 1 day
     public void sendEmailToInactiveUsers() { // done
         List<AuthUser> users = authUserRepository.findByLastLoginBefore(LocalDateTime.now().plusDays(3));
         EmailService emailService = EmailService.getInstance();
         for ( AuthUser user : users ) {
             CompletableFuture.runAsync(() -> emailService.sendEmail(user.getEmail(),
                     Util.getInstance().generateBodyForInactiveUsers(user.getUsername())
-                    ,"Login to Your Account"));
+                    , "Login to Your Account"));
         }
 
     }
-    
-    @Scheduled(fixedRate = 1000 * 60 * 5) //  5 minutes
+
+
+    @Scheduled( fixedRate = ( 1000 * 60 * 10 + 30 * 1000 ) ) //  10.5 minutes
     public void deleteExpiredTokens() { // done
-        tokenRepository.deleteByValidTillBeforeAllIgnoreCase(LocalDateTime.now());
+        tokenRepository.deleteByValidTillBefore(LocalDateTime.now());
     }
-    
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 24) // 1 day
+
+    @Scheduled( fixedRate = 1000 * 60 * 6 ) // 6 MINUTE
     public void deleteInactiveUsers() {   // done
         authUserRepository.deleteByStatusInActive();
     }
 
     // schedule for a task to be executed every day at 12:00 am
-    @Scheduled(cron = "0 0 12 * * *")
+    @Scheduled( cron = "0 0 12 * * *" )
     public void sendBirthdayEmails() { // done
         EmailService emailService = EmailService.getInstance();
 
@@ -51,7 +52,7 @@ public class ScheduleService {
         for ( AuthUser user : users ) {
             CompletableFuture.runAsync(() -> emailService.sendEmail(user.getEmail(),
                     Util.getInstance().generateBodyForBirthDay(user.getUsername())
-                    ,"Happy Birthday"));
+                    , "Happy Birthday"));
         }
 
     }
