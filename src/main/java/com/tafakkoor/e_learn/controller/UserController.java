@@ -5,13 +5,10 @@ import com.tafakkoor.e_learn.domain.AuthUser;
 import com.tafakkoor.e_learn.domain.Content;
 import com.tafakkoor.e_learn.enums.Levels;
 import com.tafakkoor.e_learn.services.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.NonNull;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -56,7 +53,6 @@ public class UserController {
     }
 
 
-
     @GetMapping("/practise/story/{level}")
     public ModelAndView testStory(@PathVariable String level) {
         ModelAndView modelAndView = new ModelAndView();
@@ -75,12 +71,16 @@ public class UserController {
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
         }
-        List<Content> contents = userService.getContentsStories(levels, userSession.getId());
-        contents.forEach(System.out::println);
-        modelAndView.addObject("flag", Objects.equals(user.getLevel(), levels));
-        modelAndView.setViewName("user/story/Stories");
-        modelAndView.addObject("stories", contents);
-        return modelAndView;
+        try {
+
+            List<Content> contents = userService.getContentsStories(levels, userSession.getId());
+            modelAndView.addObject("flag", Objects.equals(user.getLevel(), levels));
+            modelAndView.addObject("stories", contents);
+            modelAndView.setViewName("user/story/Stories");
+            return modelAndView;
+        } catch (Exception e) {
+            return userService.getInProgressPage(modelAndView, e);
+        }
     }
 
     @GetMapping("/practise/grammar/{level}")
@@ -90,39 +90,34 @@ public class UserController {
         try {
             levels = Levels.valueOf(level.toUpperCase());
         } catch (Exception e) {
-            modelAndView.addObject("flag", true);
             modelAndView.addObject("levelNotFound", "Level not found named %s".formatted(level.toUpperCase()));
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
         }
-        List<Content> contents = userService.getContentsGrammar(levels, userSession.getId());
         AuthUser user = userService.getUser(userSession.getId());
         if (!checkLevel(levels, user.getLevel())) {
-            modelAndView.addObject("flag", true);
             modelAndView.addObject("levelNotFound", "I think it's too early for you to try this level %s".formatted(level.toUpperCase()));
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
         }
-        contents.forEach(System.out::println);
-        modelAndView.setViewName("user/grammar/Grammars");
-        modelAndView.addObject("flag", false);
-        modelAndView.addObject("grammars", contents);
-        return modelAndView;
+        try {
+            List<Content> contents = userService.getContentsGrammar(levels, userSession.getId());
+            modelAndView.addObject("flag", Objects.equals(user.getLevel(), levels));
+            modelAndView.addObject("grammars", contents);
+            modelAndView.setViewName("user/grammar/Grammars");
+            return modelAndView;
+        } catch (Exception e) {
+            return userService.getInProgressPage(modelAndView, e);
+
+        }
     }
 
 
 
 
     public boolean checkLevel(@NonNull Levels level, @NonNull Levels userLevel) {
-        int ordinal = level.ordinal();
-        int userLevelOrdinal = userLevel.ordinal();
-        return ordinal <= userLevelOrdinal;
+        return level.ordinal() <= userLevel.ordinal();
     }
 
-
-    public static void main(String[] args) {
-        Levels levels = Levels.valueOf("A1".toUpperCase());
-        System.out.println("levels = " + levels);
-    }
 
 }

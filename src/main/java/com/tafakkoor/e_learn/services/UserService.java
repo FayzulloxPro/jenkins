@@ -14,15 +14,13 @@ import com.tafakkoor.e_learn.repository.UserContentRepository;
 import com.tafakkoor.e_learn.utils.Util;
 import com.tafakkoor.e_learn.utils.mail.EmailService;
 import lombok.NonNull;
-import org.aspectj.lang.annotation.Before;
-import org.hibernate.annotations.SelectBeforeUpdate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -82,23 +80,38 @@ public class UserService {
     }
 
 
-    public List<Content> getContentsStories(Levels level, Long id) {
-        if (checkUserStatus(id)) {
-            return null;
+    public List<Content> getContentsStories(Levels level, Long id) throws RuntimeException {
+        UserContent userContent = checkUserStatus(id);
+        if (userContent !=null) {
+            Content content = userContent.getContent();
+            throw new RuntimeException("You have a content in progress named \"%s\". Please complete the content first. id=%d".formatted(content.getTitle(), content.getId()));
         }
         return contentRepository.findByLevelAndContentTypeAndDeleted(level, ContentType.STORY, false);
     }
+    public ModelAndView getInProgressPage(ModelAndView modelAndView, Exception e) {
+        String eMessage = e.getMessage();
+        Long id = Long.parseLong(eMessage.substring(eMessage.indexOf("id") + 3));
+        modelAndView.addObject("inProgress", eMessage.substring(0, eMessage.indexOf("id")));
+        modelAndView.addObject("content", getContent(id).get());
+        modelAndView.setViewName("user/inProgress");
+        return modelAndView;
+    }
 
 
-    private boolean checkUserStatus(Long id) {
-        List<UserContent> userContents = userContentRepository.findByUserIdAndProgress(id, Progress.IN_PROGRESS);
-        return userContents.size() > 0;
+    private UserContent checkUserStatus(Long id) {
+        return userContentRepository.findByUserIdAndProgressOrProgress(id, Progress.IN_PROGRESS, Progress.TAKE_TEST);
     }
 
     public List<Content> getContentsGrammar(Levels level, Long id) {
-        if (checkUserStatus(id)) {
-            return null;
+        UserContent userContent = checkUserStatus(id);
+        if (userContent !=null) {
+            Content content = userContent.getContent();
+            throw new RuntimeException("You have a content in progress named \"%s\". Please complete the content first. id=%d".formatted(content.getTitle(), content.getId()));
         }
         return contentRepository.findByLevelAndContentTypeAndDeleted(level, ContentType.GRAMMAR, false);
+    }
+
+    public Optional<Content> getContent(Long id) {
+        return contentRepository.findById(id);
     }
 }
