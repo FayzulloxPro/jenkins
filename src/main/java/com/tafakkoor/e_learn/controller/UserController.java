@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 
@@ -47,8 +48,6 @@ public class UserController {
     public ModelAndView grammar() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("levelNotFound", null);
-
-        modelAndView.addObject("userLevel", userSession.getLevel());
         modelAndView.setViewName("user/grammar/levelsGrammar");
         AuthUser user = userService.getUser(userSession.getId());
         List<Levels> levelsList = userService.getLevels(user.getLevel());
@@ -70,17 +69,16 @@ public class UserController {
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
         }
-        List<Content> contents = userService.getContentsStories(levels, userSession.getId());
         AuthUser user = userService.getUser(userSession.getId());
         if (!checkLevel(levels, user.getLevel())) {
-            modelAndView.addObject("flag", true);
             modelAndView.addObject("levelNotFound", "I think it's too early for you to try this level %s".formatted(level.toUpperCase()));
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
         }
+        List<Content> contents = userService.getContentsStories(levels, userSession.getId());
         contents.forEach(System.out::println);
+        modelAndView.addObject("flag", Objects.equals(user.getLevel(), levels));
         modelAndView.setViewName("user/story/Stories");
-        modelAndView.addObject("flag", false);
         modelAndView.addObject("stories", contents);
         return modelAndView;
     }
