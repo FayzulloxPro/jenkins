@@ -35,7 +35,6 @@ public class ScheduleService {
                     Util.getInstance().generateBodyForInactiveUsers(user.getUsername())
                     , "Login to Your Account"));
         }
-
     }
 
 
