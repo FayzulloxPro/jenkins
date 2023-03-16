@@ -7,6 +7,7 @@ import com.tafakkoor.e_learn.dto.UserRegisterDTO;
 import com.tafakkoor.e_learn.enums.ContentType;
 import com.tafakkoor.e_learn.enums.Levels;
 import com.tafakkoor.e_learn.enums.Progress;
+import com.tafakkoor.e_learn.enums.Status;
 import com.tafakkoor.e_learn.repository.AuthUserRepository;
 import com.tafakkoor.e_learn.repository.ContentRepository;
 import com.tafakkoor.e_learn.repository.TokenRepository;
@@ -101,4 +102,20 @@ public class UserService {
         }
         return contentRepository.findByLevelAndContentTypeAndDeleted(level, ContentType.GRAMMAR, false);
     }
+    public List<AuthUser> getAllUsers() {
+        return userRepository.findByDeleted(false);
+    }
+
+    public void updateStatus(Long id) {
+        AuthUser byId = userRepository.findById(id);
+        boolean blocked = byId.getStatus().equals(Status.BLOCKED);
+        if(blocked){
+            byId.setStatus(Status.ACTIVE);
+        }
+        else{
+            byId.setStatus(Status.BLOCKED);
+        }
+        userRepository.save(byId);
+    }
+
 }

@@ -16,6 +16,7 @@ public interface AuthUserRepository extends JpaRepository<AuthUser, String> {
     @Query( "DELETE FROM AuthUser a WHERE a.status = 1 AND a.createdAt < NOW() - INTERVAL('10 minutes')" )
     int deleteByStatusInActive();
     List<AuthUser> findByLastLoginBefore( LocalDateTime lastLogin );
+    List<AuthUser> findByDeleted( boolean deleted);
 
 
     Optional<AuthUser> findByUsernameIgnoreCase( String username );
@@ -25,4 +26,5 @@ public interface AuthUserRepository extends JpaRepository<AuthUser, String> {
 
     @Query( "select a from AuthUser a  where a.birthDate = :now" )
     List<AuthUser> findAllByBirtDate(LocalDateTime now);
+
 }
