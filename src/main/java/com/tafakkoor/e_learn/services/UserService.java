@@ -1,21 +1,28 @@
 package com.tafakkoor.e_learn.services;
 
 import com.tafakkoor.e_learn.domain.AuthUser;
+import com.tafakkoor.e_learn.domain.Content;
 import com.tafakkoor.e_learn.domain.Image;
+import com.tafakkoor.e_learn.domain.UserContent;
 import com.tafakkoor.e_learn.dto.UserRegisterDTO;
+import com.tafakkoor.e_learn.enums.ContentType;
 import com.tafakkoor.e_learn.enums.Levels;
+import com.tafakkoor.e_learn.enums.Progress;
 import com.tafakkoor.e_learn.enums.Status;
 import com.tafakkoor.e_learn.repository.AuthUserRepository;
+import com.tafakkoor.e_learn.repository.ContentRepository;
 import com.tafakkoor.e_learn.repository.TokenRepository;
+import com.tafakkoor.e_learn.repository.UserContentRepository;
 import com.tafakkoor.e_learn.utils.Util;
 import com.tafakkoor.e_learn.utils.mail.EmailService;
 import lombok.NonNull;
+import org.aspectj.lang.annotation.Before;
+import org.hibernate.annotations.SelectBeforeUpdate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -26,13 +33,16 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
     private final ImageService imageService;
+    private final UserContentRepository userContentRepository;
+    private final ContentRepository contentRepository;
 
-    public UserService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, TokenService tokenService, ImageService imageService) {
+    public UserService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, TokenService tokenService , ImageService imageService, UserContentRepository userContentRepository, ContentRepository contentRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-
         this.tokenService = tokenService;
         this.imageService = imageService;
+        this.userContentRepository = userContentRepository;
+        this.contentRepository = contentRepository;
     }
 
     public List<Levels> getLevels(@NonNull Levels level) {
@@ -74,6 +84,49 @@ public class UserService {
         tokenService.save(util.buildToken(token, authUser));
         CompletableFuture.runAsync(() -> EmailService.getInstance().sendEmail(email, body, "Activate Email"));
     }
+
+    // Dilshod's code below
+
+
+    public List<Content> getContentsStories(Levels level, Long id) {
+        if (checkUserStatus(id)) {
+            return null;
+        }
+        return contentRepository.findByLevelAndContentTypeAndDeleted(level, ContentType.STORY, false);
+    }
+
+
+    private boolean checkUserStatus(Long id) {
+        List<UserContent> userContents = userContentRepository.findByUserIdAndProgress(id, Progress.IN_PROGRESS);
+        return userContents.size() > 0;
+    }
+
+    public List<Content> getContentsGrammar(Levels level, Long id) {
+        if (checkUserStatus(id)) {
+            return null;
+        }
+        return contentRepository.findByLevelAndContentTypeAndDeleted(level, ContentType.GRAMMAR, false);
+    }
+    public List<AuthUser> getAllUsers() {
+        return userRepository.findByDeleted(false);
+    }
+
+    public void updateStatus(Long id) {
+        AuthUser byId = userRepository.findById(id);
+        boolean blocked = byId.getStatus().equals(Status.BLOCKED);
+        if(blocked){
+            byId.setStatus(Status.ACTIVE);
+        }
+        else{
+            byId.setStatus(Status.BLOCKED);
+        }
+        userRepository.save(byId);
+    }
+
+    // Abdullo's code below that
+
+
+
 
     public boolean userExist(String username) {
         AuthUser user = userRepository.findByUsername(username);
@@ -167,4 +220,5 @@ public class UserService {
 //                .build();
 //        userRepository.save(user);
     }*/
+
 }

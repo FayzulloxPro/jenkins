@@ -2,9 +2,6 @@ package com.tafakkoor.e_learn.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.Hibernate;
-
-import java.util.Objects;
 
 @Entity
 @Builder

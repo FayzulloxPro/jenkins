@@ -1,10 +1,11 @@
 package com.tafakkoor.e_learn.domain;
 
 import com.tafakkoor.e_learn.enums.Progress;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.*;
-
-import java.util.Collection;
 
 @Getter
 @Setter

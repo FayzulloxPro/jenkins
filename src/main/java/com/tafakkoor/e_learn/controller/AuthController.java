@@ -1,6 +1,6 @@
 package com.tafakkoor.e_learn.controller;
 
-import com.tafakkoor.e_learn.domain.AuthUser;
+import  com.tafakkoor.e_learn.domain.AuthUser;
 import com.tafakkoor.e_learn.domain.Token;
 import com.tafakkoor.e_learn.dto.UserRegisterDTO;
 import com.tafakkoor.e_learn.enums.Status;
@@ -22,11 +22,9 @@ import java.util.Optional;
 @RequestMapping( "/auth" )
 public class AuthController {
     private final AuthUserRepository authUserRepository;
-    private final UserService userService ;
-
+    private final UserService userService;
     private final TokenRepository tokenRepository;
-
-    public AuthController(AuthUserRepository authUserRepository, UserService userService, TokenRepository tokenRepository) {
+    public AuthController(AuthUserRepository authUserRepository, UserService userService, TokenRepository tokenRepository ) {
         this.authUserRepository = authUserRepository;
         this.userService = userService;
         this.tokenRepository = tokenRepository;
