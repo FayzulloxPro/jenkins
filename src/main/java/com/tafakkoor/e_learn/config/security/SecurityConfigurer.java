@@ -1,30 +1,30 @@
 package com.tafakkoor.e_learn.config.security;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
 import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
-import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
-import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.time.LocalDateTime;
@@ -41,24 +41,31 @@ import java.util.stream.Collectors;
 
 )
 @PropertySource("classpath:application.properties")
-public class SecurityConfigurer {
+public class SecurityConfigurer implements WebSecurityConfigurer<WebSecurity> {
     public static final String[] WHITE_LIST = {
             "/css/**",
             "/js/**",
+            "/img/**",
             "/home",
             "/auth/login",
+            "oauth/linkedin/**",
+//            "/auth/oauth_login",
             "/upload",
             "/auth/register",
-            "/auth/**",
+//            "/auth/**",
             "/oauth_login",
             "/oauth2/**",
-            "/auth/logout",
+//            "/loginSuccess",
             "/auth/forget-password",
             "/auth/reset-password"
 
     };
+    @Autowired
+    @Lazy
+    @Qualifier("clientRegistrationRepository")
+    private ClientRegistrationRepository clientRegistrationRepository;
 
-    private static final List<String> clients = List.of("google", "facebook", "github");
+    private static final List<String> clients = List.of("google", "facebook"/*, "github", "linkedin"*/);
 
     private static String CLIENT_PROPERTY_KEY
             = "spring.security.oauth2.client.registration.";
@@ -69,11 +76,22 @@ public class SecurityConfigurer {
     private final AuthUserUserDetailsService authUserUserDetailsService;
     private final AuthenticationFailureHandler authenticationFailureHandler;
 
-    public SecurityConfigurer(Environment env, AuthUserUserDetailsService authUserUserDetailsService,
+    public SecurityConfigurer(/*ClientRegistrationRepository clientRegistrationRepository,*/ Environment env, AuthUserUserDetailsService authUserUserDetailsService,
                               AuthenticationFailureHandler authenticationFailureHandler) {
+//        this.clientRegistrationRepository = clientRegistrationRepository;
         this.env = env;
         this.authUserUserDetailsService = authUserUserDetailsService;
         this.authenticationFailureHandler = authenticationFailureHandler;
+    }
+
+    @Override
+    public void init(WebSecurity builder) throws Exception {
+
+    }
+
+    @Override
+    public void configure(WebSecurity builder) throws Exception {
+//        builder
     }
 
     private ClientRegistration getRegistration(String client) {
@@ -95,7 +113,9 @@ public class SecurityConfigurer {
             return CommonOAuth2Provider.FACEBOOK.getBuilder(client)
                     .clientId(clientId).clientSecret(clientSecret).build();
         }
-//        CommonOAuth2Provider.GITHUB // TODO add github oauth2 later
+//        if (client.equals("linkedin")) {
+//            return linkedinClientRegistration();
+//        }
         return null;
     }
 
@@ -106,6 +126,9 @@ public class SecurityConfigurer {
         return new HttpSessionOAuth2AuthorizationRequestRepository();
     }
 
+//    @Bean
+//    public HttpFirewall
+
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository() {
         List<ClientRegistration> registrations = clients.stream()
@@ -115,6 +138,23 @@ public class SecurityConfigurer {
 
         return new InMemoryClientRegistrationRepository(registrations);
     }
+
+//    private ClientRegistration linkedinClientRegistration() {
+//        return ClientRegistration.withRegistrationId("linkedin")
+//                .clientId("86ecomlbchvzno")
+//                .clientSecret("hf4cXRQmDiDh77og")
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+//                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+//                .redirectUri("{baseUrl}/{action}/oauth2/code/{registrationId}")
+//                .scope("r_liteprofile", "r_emailaddress")
+//                .authorizationUri("https://www.linkedin.com/oauth/v2/authorization")
+//                .tokenUri("https://www.linkedin.com/oauth/v2/accessToken")
+//                .userInfoUri("https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture(displayImage~:playableStreams))")
+//                .userNameAttributeName("id")
+//                .clientName("LinkedIn")
+//                .build();
+//    }
+
 
     @Bean
     public OAuth2ClientContext oauth2ClientContext() {
@@ -135,6 +175,15 @@ public class SecurityConfigurer {
                                 .authenticated()
                 )
 
+//                .exceptionHandling(exceptionHandlingConfigurer ->
+//                        exceptionHandlingConfigurer
+//                                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.NOT_FOUND))
+//                                .accessDeniedHandler(accessDeniedHandler())
+//                                .defaultAuthenticationEntryPointFor(
+//                                        new HttpStatusEntryPoint(HttpStatus.NOT_FOUND),
+//                                        new AntPathRequestMatcher("/**"))
+//                )
+
 
                 .oauth2Login()
                 .clientRegistrationRepository(clientRegistrationRepository())
@@ -154,6 +203,7 @@ public class SecurityConfigurer {
                                 .defaultSuccessUrl("/home", false)
                                 .failureHandler(authenticationFailureHandler)
                 )
+
 
 //                .formLogin(httpSecurityFormLoginConfigurer ->
 //                        httpSecurityFormLoginConfigurer
@@ -190,6 +240,17 @@ public class SecurityConfigurer {
                 );
         return http.build();
     }
+
+    //    private AccessDeniedHandler accessDeniedHandler() {
+//        return (httpServletRequest, httpServletResponse, e) -> {
+//            if (httpServletResponse.getStatus() == HttpStatus.NOT_FOUND.value()) {
+//                httpServletRequest.getRequestDispatcher("/errors/403.html").forward(httpServletRequest, httpServletResponse);
+////                httpServletResponse.sendRedirect("/auth/login?error=Authentication failed");
+//            } else {
+//                httpServletResponse.sendError(HttpStatus.FORBIDDEN.value(), "Access denied");
+//            }
+//        };
+//    }
     @Bean
     public OAuth2AuthorizedClientService authorizedClientService() {
 

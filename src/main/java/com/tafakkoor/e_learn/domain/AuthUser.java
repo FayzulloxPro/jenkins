@@ -19,7 +19,7 @@ import java.util.Collection;
 @Entity
 public class AuthUser extends Auditable {
     @JoinColumn(name = "image_id", referencedColumnName = "id")
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @ToString.Exclude
     private Image image;
 //    @NotBlank(message = "Username cannot be blank")

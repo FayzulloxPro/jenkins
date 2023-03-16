@@ -11,6 +11,10 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.social.connect.ConnectionFactoryLocator;
+import org.springframework.social.connect.UsersConnectionRepository;
+import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -33,6 +37,11 @@ public class SpringDataConfigurer {
         dataSource.setPassword(env.getRequiredProperty("spring.datasource.jdbc.password"));
         dataSource.setDriverClassName(env.getRequiredProperty("spring.datasource.jdbc.driver"));
         return dataSource;
+    }
+
+    @Bean
+    public UsersConnectionRepository usersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) { // TODO: 3/16/23 remove this method if it causes problems
+        return new JdbcUsersConnectionRepository(dataSource(), connectionFactoryLocator, Encryptors.noOpText());
     }
 
 
