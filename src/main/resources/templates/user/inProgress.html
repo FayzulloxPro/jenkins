@@ -20,15 +20,15 @@
     <h1 style="text-align: center" th:text="${inProgress}"></h1>
 </div>
 
+
 <div class="wrapper" th:if="${content.getContentType.toString().toLowerCase().equals('story')}">
+    <a class="btn btn-primary" href="/practise">Back</a>
     <a class="btn btn-primary" th:href="@{/practise/stories/{id}(id=${content.id})}">Complete </a>
 </div>
 
 <div class="wrapper" th:if="${content.getContentType().toString().toLowerCase().equals('grammar')}">
-    <a class="btn btn-primary" th:href="@{/practise/grammars/{id}(id=${content.id})}">Complete </a>
-</div>
-<div class="container">
     <a class="btn btn-primary" href="/practise">Back</a>
+    <a class="btn btn-primary" th:href="@{/practise/grammars/{id}(id=${content.id})}">Complete </a>
 </div>
 </body>
 </html>

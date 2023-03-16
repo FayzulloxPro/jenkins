@@ -82,12 +82,13 @@ public class UserService {
 
     public List<Content> getContentsStories(Levels level, Long id) throws RuntimeException {
         UserContent userContent = checkUserStatus(id);
-        if (userContent !=null) {
+        if (userContent != null) {
             Content content = userContent.getContent();
             throw new RuntimeException("You have a content in progress named \"%s\". Please complete the content first. id=%d".formatted(content.getTitle(), content.getId()));
         }
         return contentRepository.findByLevelAndContentTypeAndDeleted(level, ContentType.STORY, false);
     }
+
     public ModelAndView getInProgressPage(ModelAndView modelAndView, Exception e) {
         String eMessage = e.getMessage();
         Long id = Long.parseLong(eMessage.substring(eMessage.indexOf("id") + 3));
@@ -98,13 +99,13 @@ public class UserService {
     }
 
 
-    private UserContent checkUserStatus(Long id) {
+    public UserContent checkUserStatus(Long id) {
         return userContentRepository.findByUserIdAndProgressOrProgress(id, Progress.IN_PROGRESS, Progress.TAKE_TEST);
     }
 
     public List<Content> getContentsGrammar(Levels level, Long id) {
         UserContent userContent = checkUserStatus(id);
-        if (userContent !=null) {
+        if (userContent != null) {
             Content content = userContent.getContent();
             throw new RuntimeException("You have a content in progress named \"%s\". Please complete the content first. id=%d".formatted(content.getTitle(), content.getId()));
         }
@@ -113,5 +114,16 @@ public class UserService {
 
     public Optional<Content> getContent(Long id) {
         return contentRepository.findById(id);
+    }
+
+    public Optional<Content> getContent(String storyId, Long userId) {
+        Optional<Content> content = contentRepository.findById(Long.valueOf(storyId));
+        return Optional.empty();
+    }
+
+    public Content getStoryById(Long id) {
+        return contentRepository.findByIdAndContentType(id, ContentType.STORY);
+
+
     }
 }

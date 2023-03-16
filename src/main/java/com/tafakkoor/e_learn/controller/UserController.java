@@ -3,6 +3,7 @@ package com.tafakkoor.e_learn.controller;
 import com.tafakkoor.e_learn.config.security.UserSession;
 import com.tafakkoor.e_learn.domain.AuthUser;
 import com.tafakkoor.e_learn.domain.Content;
+import com.tafakkoor.e_learn.domain.UserContent;
 import com.tafakkoor.e_learn.enums.Levels;
 import com.tafakkoor.e_learn.services.UserService;
 import lombok.NonNull;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Controller
 
@@ -113,11 +115,42 @@ public class UserController {
     }
 
 
-
-
     public boolean checkLevel(@NonNull Levels level, @NonNull Levels userLevel) {
         return level.ordinal() <= userLevel.ordinal();
     }
 
+    @GetMapping("/practise/stories/{storyId}")
+    public ModelAndView story(@PathVariable String storyId) {
+        ModelAndView modelAndView = new ModelAndView();
+        Long id = null;
+        try {
+            id = Long.parseLong(storyId);
+        } catch (Exception e) {
+            modelAndView.addObject("levelNotFound", "Story not found ");
+            modelAndView.setViewName("user/levelNotFound");
+            return modelAndView;
+        }
+        UserContent statusContent = userService.checkUserStatus(userSession.getId());
+        if (statusContent != null) {
+            modelAndView.addObject("complete", "Complete this content first");
+            modelAndView.addObject("content", statusContent);
+            modelAndView.setViewName("user/story/readingPage");
+            return modelAndView;
+        }
+        Content content = userService.getStoryById(id);
+        if (content == null) {
+            modelAndView.addObject("levelNotFound", "Story not found ");
+            modelAndView.setViewName("user/levelNotFound");
+            return modelAndView;
+        }
+        modelAndView.addObject("content", content);
+        modelAndView.setViewName("user/story/readingPage");
+        return modelAndView;
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return "user/story/readingPage";
+    }
 
 }
