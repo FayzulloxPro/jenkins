@@ -1,16 +1,14 @@
 package com.tafakkoor.e_learn.services;
 
 import com.tafakkoor.e_learn.domain.AuthUser;
+import com.tafakkoor.e_learn.domain.Comment;
 import com.tafakkoor.e_learn.domain.Content;
 import com.tafakkoor.e_learn.domain.UserContent;
 import com.tafakkoor.e_learn.dto.UserRegisterDTO;
 import com.tafakkoor.e_learn.enums.ContentType;
 import com.tafakkoor.e_learn.enums.Levels;
 import com.tafakkoor.e_learn.enums.Progress;
-import com.tafakkoor.e_learn.repository.AuthUserRepository;
-import com.tafakkoor.e_learn.repository.ContentRepository;
-import com.tafakkoor.e_learn.repository.TokenRepository;
-import com.tafakkoor.e_learn.repository.UserContentRepository;
+import com.tafakkoor.e_learn.repository.*;
 import com.tafakkoor.e_learn.utils.Util;
 import com.tafakkoor.e_learn.utils.mail.EmailService;
 import lombok.NonNull;
@@ -20,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -30,13 +29,15 @@ public class UserService {
     private final TokenService tokenService;
     private final UserContentRepository userContentRepository;
     private final ContentRepository contentRepository;
+    private final CommentRepository commentRepository;
 
-    public UserService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, TokenService tokenService, UserContentRepository userContentRepository, ContentRepository contentRepository) {
+    public UserService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, TokenService tokenService, UserContentRepository userContentRepository, ContentRepository contentRepository, CommentRepository commentRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
         this.userContentRepository = userContentRepository;
         this.contentRepository = contentRepository;
+        this.commentRepository = commentRepository;
     }
 
     public List<Levels> getLevels(@NonNull Levels level) {
@@ -123,7 +124,9 @@ public class UserService {
 
     public Content getStoryById(Long id) {
         return contentRepository.findByIdAndContentType(id, ContentType.STORY);
+    }
 
-
+    public List<Comment> getComments(Long id) {
+        return Objects.requireNonNullElse(commentRepository.findAllByContentIdAndDeleted(id, false), new ArrayList<>());
     }
 }

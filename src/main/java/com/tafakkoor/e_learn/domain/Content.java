@@ -4,6 +4,7 @@ import com.tafakkoor.e_learn.enums.ContentType;
 import com.tafakkoor.e_learn.enums.Levels;
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,7 +13,7 @@ import lombok.*;
 @ToString
 @Builder
 @Entity
-public class Content extends Auditable{
+public class Content extends Auditable {
     @Column(name = "title", nullable = false)
     private String title;
     @Column(name = "author", nullable = false)

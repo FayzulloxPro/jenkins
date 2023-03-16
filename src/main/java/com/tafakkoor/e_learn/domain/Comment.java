@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
-public class Comment extends Auditable{
+public class Comment extends Auditable {
     @Column(nullable = false)
     private String comment;
     @JoinColumn(nullable = false)
@@ -23,8 +23,13 @@ public class Comment extends Auditable{
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private CommentType commentType;
-    @JoinColumn(nullable = false)
+    //    @JoinColumn(
+//            name = "parent_comment_id"
+//    )
+//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(nullable = true)
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Comment parentComment;
 
 }

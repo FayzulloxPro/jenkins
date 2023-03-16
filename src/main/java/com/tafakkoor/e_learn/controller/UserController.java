@@ -2,6 +2,7 @@ package com.tafakkoor.e_learn.controller;
 
 import com.tafakkoor.e_learn.config.security.UserSession;
 import com.tafakkoor.e_learn.domain.AuthUser;
+import com.tafakkoor.e_learn.domain.Comment;
 import com.tafakkoor.e_learn.domain.Content;
 import com.tafakkoor.e_learn.domain.UserContent;
 import com.tafakkoor.e_learn.enums.Levels;
@@ -133,7 +134,8 @@ public class UserController {
         UserContent statusContent = userService.checkUserStatus(userSession.getId());
         if (statusContent != null) {
             modelAndView.addObject("complete", "Complete this content first");
-            modelAndView.addObject("content", statusContent);
+            modelAndView.addObject("content",statusContent.getContent());
+            modelAndView.addObject("comments", userService.getComments(statusContent.getContent().getId()));
             modelAndView.setViewName("user/story/readingPage");
             return modelAndView;
         }
@@ -143,6 +145,8 @@ public class UserController {
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
         }
+        List<Comment> comments = userService.getComments(content.getId());
+        modelAndView.addObject("comments", comments);
         modelAndView.addObject("content", content);
         modelAndView.setViewName("user/story/readingPage");
         return modelAndView;
