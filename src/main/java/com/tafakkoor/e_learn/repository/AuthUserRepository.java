@@ -26,5 +26,4 @@ public interface AuthUserRepository extends JpaRepository<AuthUser, String> {
 
     @Query( "select a from AuthUser a  where a.birthDate = :now" )
     List<AuthUser> findAllByBirtDate(LocalDateTime now);
-
 }
