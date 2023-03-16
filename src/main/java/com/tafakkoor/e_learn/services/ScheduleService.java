@@ -8,6 +8,7 @@ import com.tafakkoor.e_learn.utils.mail.EmailService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -35,7 +36,6 @@ public class ScheduleService {
                     Util.getInstance().generateBodyForInactiveUsers(user.getUsername())
                     , "Login to Your Account"));
         }
-
     }
 
 
@@ -54,7 +54,7 @@ public class ScheduleService {
     public void sendBirthdayEmails() { // done
         EmailService emailService = EmailService.getInstance();
 
-        List<AuthUser> users = authUserRepository.findAllByBirtDate(LocalDateTime.now());
+        List<AuthUser> users = authUserRepository.findAllByBirtDate(LocalDate.now());
         for ( AuthUser user : users ) {
             CompletableFuture.runAsync(() -> emailService.sendEmail(user.getEmail(),
                     Util.getInstance().generateBodyForBirthDay(user.getUsername())
