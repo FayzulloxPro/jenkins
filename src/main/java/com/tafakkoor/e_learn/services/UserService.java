@@ -1,25 +1,26 @@
 package com.tafakkoor.e_learn.services;
 
 import com.tafakkoor.e_learn.domain.AuthUser;
+import com.tafakkoor.e_learn.domain.Comment;
 import com.tafakkoor.e_learn.domain.Content;
 import com.tafakkoor.e_learn.domain.UserContent;
 import com.tafakkoor.e_learn.dto.UserRegisterDTO;
 import com.tafakkoor.e_learn.enums.ContentType;
 import com.tafakkoor.e_learn.enums.Levels;
 import com.tafakkoor.e_learn.enums.Progress;
+import com.tafakkoor.e_learn.enums.Status;
 import com.tafakkoor.e_learn.repository.*;
 import com.tafakkoor.e_learn.utils.Util;
 import com.tafakkoor.e_learn.utils.mail.EmailService;
 import lombok.NonNull;
-import org.aspectj.lang.annotation.Before;
-import org.hibernate.annotations.SelectBeforeUpdate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -29,13 +30,15 @@ public class UserService {
     private final TokenService tokenService;
     private final UserContentRepository userContentRepository;
     private final ContentRepository contentRepository;
+    private final CommentRepository commentRepository;
 
-    public UserService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, TokenService tokenService, UserContentRepository userContentRepository, ContentRepository contentRepository) {
+    public UserService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, TokenService tokenService, UserContentRepository userContentRepository, ContentRepository contentRepository, CommentRepository commentRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
         this.userContentRepository = userContentRepository;
         this.contentRepository = contentRepository;
+        this.commentRepository = commentRepository;
     }
 
     public List<Levels> getLevels(@NonNull Levels level) {
@@ -119,6 +122,7 @@ public class UserService {
         Optional<Content> content = contentRepository.findById(Long.valueOf(storyId));
         return Optional.empty();
     }
+
     public List<AuthUser> getAllUsers() {
         return userRepository.findByDeleted(false);
     }
@@ -126,16 +130,14 @@ public class UserService {
     public void updateStatus(Long id) {
         AuthUser byId = userRepository.findById(id);
         boolean blocked = byId.getStatus().equals(Status.BLOCKED);
-        if(blocked){
+        if (blocked) {
             byId.setStatus(Status.ACTIVE);
-        }
-        else{
+        } else {
             byId.setStatus(Status.BLOCKED);
         }
         userRepository.save(byId);
     }
 
-}
 
     public Content getStoryById(Long id) {
         return contentRepository.findByIdAndContentType(id, ContentType.STORY);
@@ -143,5 +145,22 @@ public class UserService {
 
     public List<Comment> getComments(Long id) {
         return Objects.requireNonNullElse(commentRepository.findAllByContentIdAndDeleted(id, false), new ArrayList<>());
+    }
+
+    public void addComment(Comment comment) {
+        commentRepository.saveComment(comment.getComment(), String.valueOf(comment.getCommentType()), comment.getUserId().getId(), comment.getContentId(), comment.getParentId());
+    }
+
+    public Optional<Comment> getCommentById(Long commentId) {
+
+        return commentRepository.findById(commentId);
+    }
+
+    public void deleteCommentById(Long id) {
+        commentRepository.setAsDelete(id);
+    }
+
+    public void updateComment(Comment comment1) {
+        commentRepository.updateComment(comment1.getComment(), comment1.getId());
     }
 }

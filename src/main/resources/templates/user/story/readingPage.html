@@ -6,6 +6,16 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf_viewer.min.css" rel="stylesheet"
           type="text/css"/>
+    <style>
+        .wrapper {
+            width: 800px;
+            margin: 150px auto;
+            padding: 20px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0px 10px 40px 0px rgba(47, 47, 47, .1);
+        }
+    </style>
 </head>
 <body>
 <div class="alert-warning" th:value="${complete}"></div>
@@ -38,32 +48,101 @@
             <br>
         </section>
     </div>
-
-    <div th:if="${comments.size()!=0}">
-        <h1>Comments</h1>
-        <div th:each="comment : ${comments}">
-            <div  class="col-md-5 offset-1" style="margin-left: 25px; background-color: #e9ecef; border-radius: 5px">
-                <div style="margin-left: 30px" th:utext="${comment.comment}"> </div>
-                <div>
-                    <p th:text="${#temporals.format(comment.createdAt, 'HH:mm dd-MM-yyyy')}"></p>
-                </div>
-<!--                <div th:text="${comment.user?.username}"></div>-->
+    <div>
+        <form th:action="@{/practise/story/comments/add/{id}(id=${content.id})}" method="post">
+            <div class="col-md-4 offset-1">
+                <label for="comment">Comment</label>
+                <textarea placeholder="Leave your comment" class="form-control" id="comment" name="comment"
+                          rows="4"></textarea>
+                <!--<select name="commentType">
+                    <option value="COMMENT" selected>Comment</option>
+                </select>-->
             </div>
             <br>
+            <div class="col-md-4 offset-1">
+                <button class="btn btn-primary" type="submit">Add</button>
+            </div>
+        </form>
+        <div th:if="${comments.size()==0}">
+            <div class="col-md-5 offset-1" style="margin-left: 25px; background-color: #e9ecef; border-radius: 5px">
+                <div style="margin-left: 30px">No comments</div>
+            </div>
+        </div>
+
+        <div th:if="${comments.size()!=0}">
+
+            <br>
+            <div class="wrapper">
+                <div class="col-md-5 offset-1" style="margin-left: 25px; background-color: #e9ecef; border-radius: 5px">
+                    <div style="margin-left: 30px">
+                        <br>
+                        <h3 style="text-align: center">Comments</h3>
+                        <br>
+                    </div>
+                </div>
+                <br><br>
+                <div th:each="comment, c : ${comments}">
+                    <div class="col-md-5 offset-1"
+                         style="margin-left: 25px; background-color: #e9ecef; border-radius: 5px">
+                        <div th:if="${comment.userId.id.equals(userId)}">
+                            <div>
+                                <form th:action="@{/practise/story/comments/update/{id}(id=${comment.id})}"
+                                      method="post">
+                                    <textarea name="comment" th:text="${comment.comment}"></textarea>
+                                    <button class="btn btn-primary btn-sm" type="submit">Update</button>
+                                </form>
+
+                                <form method="post"
+                                      th:action="@{/practise/story/comments/delete/{id}(id=${comment.id})}">
+                                    <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div th:unless="${comment.userId.id.equals(userId)}" style="margin-left: 30px">
+                            <strong th:utext="${comment.comment}"></strong>
+                        </div>
+                        <div>
+                            <p style="margin-left: 5px"
+                               th:text="${#temporals.format(comment.createdAt, 'HH:mm dd-MM-yyyy')}"></p>
+                            <form th:unless="${comment.userId.id.equals(userId)}"
+                                  th:action="@{/users/see/{id}(id=${comment.userId?.id})}">
+                                <button class="btn btn-primary btn-sm"
+                                        style="margin-left: 5px; background-color: #0a53be"
+                                        th:text="'commented by '+${comment.userId?.username}"></button>
+                            </form>
+
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Reply
+                            </button>
+
+                        </div>
+
+                        <!--                <div th:text="${comment.user?.username}"></div>-->
+                    </div>
+                    <br>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>

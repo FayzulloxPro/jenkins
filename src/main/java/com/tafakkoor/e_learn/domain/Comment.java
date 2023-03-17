@@ -12,24 +12,16 @@ import lombok.*;
 @ToString
 @Builder
 public class Comment extends Auditable {
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String comment;
-    @JoinColumn(nullable = false)
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Content content;
-    @JoinColumn(nullable = false)
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private AuthUser user;
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private CommentType commentType;
-    //    @JoinColumn(
-//            name = "parent_comment_id"
-//    )
-//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = true)
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Comment parentComment;
+    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private AuthUser userId;
+    @Column(name = "content_id", nullable = false)
+    private Long contentId;
+    private Long parentId;
 
 }

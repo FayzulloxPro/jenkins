@@ -5,14 +5,19 @@ import com.tafakkoor.e_learn.domain.AuthUser;
 import com.tafakkoor.e_learn.domain.Comment;
 import com.tafakkoor.e_learn.domain.Content;
 import com.tafakkoor.e_learn.domain.UserContent;
+import com.tafakkoor.e_learn.enums.CommentType;
 import com.tafakkoor.e_learn.enums.Levels;
 import com.tafakkoor.e_learn.services.UserService;
 import lombok.NonNull;
+import org.dom4j.rule.Mode;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -123,6 +128,12 @@ public class UserController {
     @GetMapping("/practise/stories/{storyId}")
     public ModelAndView story(@PathVariable String storyId) {
         ModelAndView modelAndView = new ModelAndView();
+        AuthUser user = userService.getUser(userSession.getId());
+        if (user == null || user.getLevel().equals(Levels.DEFAULT)) {
+            modelAndView.addObject("levelNotFound", "You have not taken assessment test yet");
+            modelAndView.setViewName("user/levelNotFound");
+            return modelAndView;
+        }
         Long id = null;
         try {
             id = Long.parseLong(storyId);
@@ -134,7 +145,7 @@ public class UserController {
         UserContent statusContent = userService.checkUserStatus(userSession.getId());
         if (statusContent != null) {
             modelAndView.addObject("complete", "Complete this content first");
-            modelAndView.addObject("content",statusContent.getContent());
+            modelAndView.addObject("content", statusContent.getContent());
             modelAndView.addObject("comments", userService.getComments(statusContent.getContent().getId()));
             modelAndView.setViewName("user/story/readingPage");
             return modelAndView;
@@ -146,6 +157,8 @@ public class UserController {
             return modelAndView;
         }
         List<Comment> comments = userService.getComments(content.getId());
+
+        modelAndView.addObject("userId", userSession.getId());
         modelAndView.addObject("comments", comments);
         modelAndView.addObject("content", content);
         modelAndView.setViewName("user/story/readingPage");
@@ -155,6 +168,79 @@ public class UserController {
     @GetMapping("/test")
     public String test() {
         return "user/story/readingPage";
+    }
+
+    @PostMapping("/practise/story/comments/add/{id}")
+    public ModelAndView addComment(@PathVariable String id, @ModelAttribute("comment") Comment comment) {
+        ModelAndView modelAndView = new ModelAndView();
+        Long contentId = null;
+        try {
+            contentId = Long.parseLong(id);
+        } catch (Exception e) {
+            modelAndView.addObject("levelNotFound", "Story not found ");
+            modelAndView.setViewName("user/levelNotFound");
+            return modelAndView;
+        }
+        Content content = userService.getStoryById(contentId);
+        if (content == null) {
+            modelAndView.addObject("levelNotFound", "Story not found ");
+            modelAndView.setViewName("user/levelNotFound");
+            return modelAndView;
+        }
+        comment.setUserId(userService.getUser(userSession.getId()));
+        comment.setContentId(content.getId());
+        comment.setCommentType(Objects.requireNonNullElse(comment.getCommentType(), CommentType.COMMENT));
+        userService.addComment(comment);
+        modelAndView.setViewName("redirect:/practise/stories/" + content.getId());
+        return modelAndView;
+    }
+
+
+    @PostMapping("/practise/story/comments/delete/{id}")
+    public ModelAndView deleteComment(@PathVariable String id) {
+        ModelAndView modelAndView = new ModelAndView();
+        Long commentId = null;
+        try {
+            commentId = Long.parseLong(id);
+        } catch (Exception e) {
+            modelAndView.addObject("levelNotFound", " ");
+            modelAndView.setViewName("user/levelNotFound");
+            return modelAndView;
+        }
+        Optional<Comment> commentOptional = userService.getCommentById(commentId);
+        if (commentOptional.isEmpty()) {
+            modelAndView.addObject("levelNotFound", "Something went wrong");
+            modelAndView.setViewName("user/levelNotFound");
+            return modelAndView;
+        }
+        Comment comment = commentOptional.get();
+        userService.deleteCommentById(comment.getId());
+        modelAndView.setViewName("redirect:/practise/stories/" + comment.getContentId());
+        return modelAndView;
+    }
+
+    @PostMapping("/practise/story/comments/update/{commentId}")
+    public ModelAndView updateComment(@PathVariable String commentId, @ModelAttribute("comment") Comment comment) {
+        ModelAndView modelAndView = new ModelAndView();
+        Long id = null;
+        try {
+            id = Long.parseLong(commentId);
+        } catch (Exception e) {
+            modelAndView.addObject("levelNotFound", " ");
+            modelAndView.setViewName("user/levelNotFound");
+            return modelAndView;
+        }
+        Optional<Comment> commentOptional = userService.getCommentById(id);
+        if (commentOptional.isEmpty()) {
+            modelAndView.addObject("levelNotFound", "Something went wrong");
+            modelAndView.setViewName("user/levelNotFound");
+            return modelAndView;
+        }
+        Comment comment1 = commentOptional.get();
+        comment1.setComment(comment.getComment());
+        userService.updateComment(comment1);
+        modelAndView.setViewName("redirect:/practise/stories/" + comment1.getContentId());
+        return modelAndView;
     }
 
 }
