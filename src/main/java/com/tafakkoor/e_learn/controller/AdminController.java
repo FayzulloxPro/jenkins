@@ -43,7 +43,7 @@ public class AdminController {
         if(role.equals("ADMIN")){
             userService.updateRole(id, role);
         }
-        else if(role2.equals("TEACHER")){
+        if(role2.equals("TEACHER")){
             userService.updateRole(id, role2);
         }
         return "redirect:/admin";
