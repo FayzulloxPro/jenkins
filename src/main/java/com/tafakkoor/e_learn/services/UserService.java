@@ -16,9 +16,6 @@ import com.tafakkoor.e_learn.repository.UserContentRepository;
 import com.tafakkoor.e_learn.utils.Util;
 import com.tafakkoor.e_learn.utils.mail.EmailService;
 import lombok.NonNull;
-import org.aspectj.lang.annotation.Before;
-import org.hibernate.annotations.SelectBeforeUpdate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +33,7 @@ public class UserService {
     private final UserContentRepository userContentRepository;
     private final ContentRepository contentRepository;
 
-    public UserService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, TokenService tokenService , ImageService imageService, UserContentRepository userContentRepository, ContentRepository contentRepository) {
+    public UserService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, TokenService tokenService, ImageService imageService, UserContentRepository userContentRepository, ContentRepository contentRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
@@ -107,6 +104,7 @@ public class UserService {
         }
         return contentRepository.findByLevelAndContentTypeAndDeleted(level, ContentType.GRAMMAR, false);
     }
+
     public List<AuthUser> getAllUsers() {
         return userRepository.findByDeleted(false);
     }
@@ -114,18 +112,15 @@ public class UserService {
     public void updateStatus(Long id) {
         AuthUser byId = userRepository.findById(id);
         boolean blocked = byId.getStatus().equals(Status.BLOCKED);
-        if(blocked){
+        if (blocked) {
             byId.setStatus(Status.ACTIVE);
-        }
-        else{
+        } else {
             byId.setStatus(Status.BLOCKED);
         }
         userRepository.save(byId);
     }
 
     // Abdullo's code below that
-
-
 
 
     public boolean userExist(String username) {
@@ -189,6 +184,13 @@ public class UserService {
 
     public void saveLinkedinUser(Map<String, Object> attributes) {
         attributes.entrySet().forEach(System.out::println);
+    }
+
+    public void updateRole(Long id, String role) {
+        AuthUser user = userRepository.findById(id);
+        user.getAuthRoles().clear();
+        user.getAuthRoles().add(userRepository.findRoleByName(role));
+        userRepository.save(user);
     }
 
     /*public void saveGithubUser(Map<String, Object> attributes) {
