@@ -54,9 +54,6 @@
                 <label for="comment">Comment</label>
                 <textarea placeholder="Leave your comment" class="form-control" id="comment" name="comment"
                           rows="4"></textarea>
-                <!--<select name="commentType">
-                    <option value="COMMENT" selected>Comment</option>
-                </select>-->
             </div>
             <br>
             <div class="col-md-4 offset-1">
@@ -91,7 +88,6 @@
                                     <textarea name="comment" th:text="${comment.comment}"></textarea>
                                     <button class="btn btn-primary btn-sm" type="submit">Update</button>
                                 </form>
-
                                 <form method="post"
                                       th:action="@{/practise/story/comments/delete/{id}(id=${comment.id})}">
                                     <button class="btn btn-danger btn-sm" type="submit">Delete</button>
@@ -110,14 +106,10 @@
                                         style="margin-left: 5px; background-color: #0a53be"
                                         th:text="'commented by '+${comment.userId?.username}"></button>
                             </form>
-
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                 Reply
                             </button>
-
                         </div>
-
-                        <!--                <div th:text="${comment.user?.username}"></div>-->
                     </div>
                     <br>
                 </div>
@@ -125,25 +117,6 @@
         </div>
     </div>
 </div>
-
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>

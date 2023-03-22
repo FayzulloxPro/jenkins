@@ -163,4 +163,8 @@ public class UserService {
     public void updateComment(Comment comment1) {
         commentRepository.updateComment(comment1.getComment(), comment1.getId());
     }
+
+    public void saveUserContent(UserContent userContent) {
+        userContentRepository.save(userContent);
+    }
 }
