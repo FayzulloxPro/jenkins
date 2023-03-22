@@ -148,16 +148,46 @@
         </section>
     </div>
     <div>
-        <form method="post" th:action="@{/practise/stories/{id}(id=${content.id})/words/add}">
+        <form method="post" th:action="@{/practise/words/add/{id}(id=${content.id})}">
             <div class="container">
                 <div class="wrap">
                     <h2>Add vocabularies</h2>
                     <a href="#" class="add">+</a>
                 </div>
+                <div>
+                    <span>You have to add at least 5 words to take a test and earn points :)</span>
+                </div>
+                <div class="inp-group">
+                    <div class="flex">
+                        <input type="text" name="word1" placeholder="english" required>
+                        <input type="text" name="translation1" placeholder="translation" required>
+                        <input type="text" name="definition1" placeholder="definition">
+                    </div>
+                    <div class="flex">
+                        <input type="text" name="word2" placeholder="english" required>
+                        <input type="text" name="translation2" placeholder="translation" required>
+                        <input type="text" name="definition2" placeholder="definition">
+                    </div>
+                    <div class="flex">
+                        <input type="text" name="word3" placeholder="english" required>
+                        <input type="text" name="translation3" placeholder="translation" required>
+                        <input type="text" name="definition3" placeholder="definition">
+                    </div>
+                    <div class="flex">
+                        <input type="text" name="word4" placeholder="english" required>
+                        <input type="text" name="translation4" placeholder="translation" required>
+                        <input type="text" name="definition4" placeholder="definition">
+                    </div>
+                    <div class="flex">
+                        <input type="text" name="word5" placeholder="english" required>
+                        <input type="text" name="translation5" placeholder="translation" required>
+                        <input type="text" name="definition5" placeholder="definition">
+                    </div>
+                </div>
                 <div class="inp-group">
 
                 </div>
-                <button class="btn btn-primary" type="submit">Add</button>
+                <button class="btn btn-primary" type="submit">Add all</button>
             </div>
         </form>
 
@@ -323,17 +353,20 @@
     function addInput() {
         const englishWord = document.createElement("input");
         englishWord.type = "text";
-        englishWord.placeholder = "Enter english word";
+        englishWord.placeholder = "english";
         englishWord.setAttribute("required", "")
+        englishWord.setAttribute("name", "englishWord");
 
         const uzbekWord = document.createElement("input");
         uzbekWord.type = "text";
-        uzbekWord.placeholder = "Enter uzbek word";
-        uzbekWord.setAttribute("required", "")
+        uzbekWord.placeholder = "translation";
+        uzbekWord.setAttribute("required", "");
+        uzbekWord.setAttribute("name", "uzbekWord");
 
         const definition = document.createElement("input");
         definition.type = "text";
-        definition.placeholder = "Enter definition";
+        definition.placeholder = "definition";
+        definition.setAttribute("name", "definition");
 
         const btn = document.createElement("a");
         btn.c1assName = "delete";
@@ -346,6 +379,7 @@
         flex.className = "flex";
 
         input.appendChild(flex);
+
         flex.appendChild(englishWord);
         flex.appendChild(uzbekWord);
         flex.appendChild(definition);

@@ -6,10 +6,7 @@
 package com.tafakkoor.e_learn.controller;
 
 import com.tafakkoor.e_learn.config.security.UserSession;
-import com.tafakkoor.e_learn.domain.AuthUser;
-import com.tafakkoor.e_learn.domain.Comment;
-import com.tafakkoor.e_learn.domain.Content;
-import com.tafakkoor.e_learn.domain.UserContent;
+import com.tafakkoor.e_learn.domain.*;
 import com.tafakkoor.e_learn.enums.CommentType;
 import com.tafakkoor.e_learn.enums.ContentType;
 import com.tafakkoor.e_learn.enums.Levels;
@@ -19,6 +16,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -252,4 +251,41 @@ public class UserController {
         }
         return modelAndView;
     }
+
+    @PostMapping("/practise/words/add/{id}")
+    public ModelAndView addWord(@PathVariable String id, HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+        long contentId;
+
+        try {
+            contentId = Long.parseLong(id);
+        } catch (Exception var6) {
+            modelAndView.addObject("levelNotFound", "Story not found ");
+            modelAndView.setViewName("user/levelNotFound");
+            return modelAndView;
+        }
+        try {
+            Optional<Content> content = userService.getContent(contentId);
+            List<Vocabulary> vocabularies = userService.mapRequestToVocabularyList(request, content.get(), userSession.getUser());
+            userService.addVocabularyList(vocabularies);
+        } catch (Exception e) {
+//            List<Comment> comments = userService.getComments(content.getId());
+//            modelAndView.addObject("userId", userSession.getId());
+//            modelAndView.addObject("comments", comments);
+//            modelAndView.addObject("content", content);
+            e.printStackTrace();
+            modelAndView.setViewName("user/story/readingPage");
+        }
+
+        Content content = userService.getStoryById(contentId);
+        if (content == null) {
+            modelAndView.addObject("levelNotFound", "Story not found ");
+            modelAndView.setViewName("user/levelNotFound");
+        } else {
+
+            modelAndView.setViewName("redirect:/practise/stories/" + content.getId());
+        }
+        return modelAndView;
+    }
+
 }

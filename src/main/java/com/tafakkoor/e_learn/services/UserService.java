@@ -1,9 +1,6 @@
 package com.tafakkoor.e_learn.services;
 
-import com.tafakkoor.e_learn.domain.AuthUser;
-import com.tafakkoor.e_learn.domain.Comment;
-import com.tafakkoor.e_learn.domain.Content;
-import com.tafakkoor.e_learn.domain.UserContent;
+import com.tafakkoor.e_learn.domain.*;
 import com.tafakkoor.e_learn.dto.UserRegisterDTO;
 import com.tafakkoor.e_learn.enums.ContentType;
 import com.tafakkoor.e_learn.enums.Levels;
@@ -12,6 +9,7 @@ import com.tafakkoor.e_learn.enums.Status;
 import com.tafakkoor.e_learn.repository.*;
 import com.tafakkoor.e_learn.utils.Util;
 import com.tafakkoor.e_learn.utils.mail.EmailService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,14 +29,16 @@ public class UserService {
     private final UserContentRepository userContentRepository;
     private final ContentRepository contentRepository;
     private final CommentRepository commentRepository;
+    private final VocabularyRepository vocabularyRepository;
 
-    public UserService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, TokenService tokenService, UserContentRepository userContentRepository, ContentRepository contentRepository, CommentRepository commentRepository) {
+    public UserService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, TokenService tokenService, UserContentRepository userContentRepository, ContentRepository contentRepository, CommentRepository commentRepository, VocabularyRepository vocabularyRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
         this.userContentRepository = userContentRepository;
         this.contentRepository = contentRepository;
         this.commentRepository = commentRepository;
+        this.vocabularyRepository = vocabularyRepository;
     }
 
     public List<Levels> getLevels(@NonNull Levels level) {
@@ -152,7 +152,6 @@ public class UserService {
     }
 
     public Optional<Comment> getCommentById(Long commentId) {
-
         return commentRepository.findById(commentId);
     }
 
@@ -166,5 +165,48 @@ public class UserService {
 
     public void saveUserContent(UserContent userContent) {
         userContentRepository.save(userContent);
+    }
+
+    public List<Vocabulary> mapRequestToVocabularyList(HttpServletRequest request, Content content, AuthUser authUser) {
+        List<Vocabulary> vocabularyList = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            vocabularyList.add(mapVocabulary(request, i, authUser, content));
+        }
+        String[] uzbekWords = request.getParameterValues("uzbekWord");
+        String[] englishWords = request.getParameterValues("englishWord");
+        String[] definitions = request.getParameterValues("definition");
+        if (uzbekWords == null || englishWords == null ||
+                uzbekWords.length == 0 ||
+                englishWords.length == 0 ||
+                uzbekWords.length != englishWords.length
+        ) {
+            throw new RuntimeException("Please fill all fields");
+        }
+        for (int i = 0; i < uzbekWords.length; i++) {
+            Vocabulary vocabulary = Vocabulary.builder()
+                    .story(content)
+                    .authUser(authUser)
+                    .word(englishWords[i])
+                    .translation(uzbekWords[i])
+                    .definition(Objects.requireNonNullElse(definitions[i], ""))
+                    .build();
+            vocabularyList.add(vocabulary);
+        }
+        return vocabularyList;
+    }
+
+    private Vocabulary mapVocabulary(HttpServletRequest request, int i, AuthUser authUser, Content content) {
+        return Vocabulary.builder()
+                .word(request.getParameter("word" + i))
+                .translation(request.getParameter("translation" + i))
+                .definition(request.getParameter("definition" + i))
+                .story(content)
+                .authUser(authUser)
+                .build();
+    }
+
+    public void addVocabularyList(List<Vocabulary> vocabularies) {
+        vocabularyRepository.saveAll(vocabularies);
     }
 }
