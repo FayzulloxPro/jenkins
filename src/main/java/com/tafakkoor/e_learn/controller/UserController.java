@@ -45,10 +45,10 @@ public class UserController {
     @GetMapping({"/practise/story"})
     public ModelAndView story() {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("userLevel", this.userSession.getLevel());
+        modelAndView.addObject("userLevel", userSession.getLevel());
         modelAndView.setViewName("user/story/levelsStory");
-        AuthUser user = this.userService.getUser(this.userSession.getId());
-        List<Levels> levelsList = this.userService.getLevels(user.getLevel());
+        AuthUser user = userService.getUser(userSession.getId());
+        List<Levels> levelsList = userService.getLevels(user.getLevel());
         modelAndView.addObject("levels", levelsList);
         return modelAndView;
     }
@@ -56,10 +56,10 @@ public class UserController {
     @GetMapping({"/practise/grammar"})
     public ModelAndView grammar() {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("levelNotFound", (Object)null);
+        modelAndView.addObject("levelNotFound",null);
         modelAndView.setViewName("user/grammar/levelsGrammar");
-        AuthUser user = this.userService.getUser(this.userSession.getId());
-        List<Levels> levelsList = this.userService.getLevels(user.getLevel());
+        AuthUser user = userService.getUser(userSession.getId());
+        List<Levels> levelsList = userService.getLevels(user.getLevel());
         modelAndView.addObject("levels", levelsList);
         return modelAndView;
     }
@@ -67,7 +67,7 @@ public class UserController {
     @GetMapping({"/practise/story/{level}"})
     public ModelAndView testStory(@PathVariable String level) {
         ModelAndView modelAndView = new ModelAndView();
-        Levels levels = null;
+        Levels levels ;
 
         try {
             levels = Levels.valueOf(level.toUpperCase());
@@ -78,20 +78,20 @@ public class UserController {
             return modelAndView;
         }
 
-        AuthUser user = this.userService.getUser(this.userSession.getId());
-        if (!this.checkLevel(levels, user.getLevel())) {
+        AuthUser user = userService.getUser(userSession.getId());
+        if (!checkLevel(levels, user.getLevel())) {
             modelAndView.addObject("levelNotFound", "I think it's too early for you to try this level %s".formatted(level.toUpperCase()));
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
         } else {
             try {
-                List<Content> contents = this.userService.getContentsStories(levels, this.userSession.getId());
+                List<Content> contents = userService.getContentsStories(levels, userSession.getId());
                 modelAndView.addObject("flag", Objects.equals(user.getLevel(), levels));
                 modelAndView.addObject("stories", contents);
                 modelAndView.setViewName("user/story/Stories");
                 return modelAndView;
             } catch (Exception var6) {
-                return this.userService.getInProgressPage(modelAndView, var6);
+                return userService.getInProgressPage(modelAndView, var6);
             }
         }
     }
@@ -99,7 +99,7 @@ public class UserController {
     @GetMapping({"/practise/grammar/{level}"})
     public ModelAndView testGrammar(@PathVariable String level) {
         ModelAndView modelAndView = new ModelAndView();
-        Levels levels = null;
+        Levels levels;
 
         try {
             levels = Levels.valueOf(level.toUpperCase());
@@ -109,40 +109,34 @@ public class UserController {
             return modelAndView;
         }
 
-        AuthUser user = this.userService.getUser(this.userSession.getId());
-        if (!this.checkLevel(levels, user.getLevel())) {
+        AuthUser user = userService.getUser(userSession.getId());
+        if (!checkLevel(levels, user.getLevel())) {
             modelAndView.addObject("levelNotFound", "I think it's too early for you to try this level %s".formatted(level.toUpperCase()));
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
         } else {
             try {
-                List<Content> contents = this.userService.getContentsGrammar(levels, this.userSession.getId());
+                List<Content> contents = userService.getContentsGrammar(levels, userSession.getId());
                 modelAndView.addObject("flag", Objects.equals(user.getLevel(), levels));
                 modelAndView.addObject("grammars", contents);
                 modelAndView.setViewName("user/grammar/Grammars");
                 return modelAndView;
             } catch (Exception var6) {
-                return this.userService.getInProgressPage(modelAndView, var6);
+                return userService.getInProgressPage(modelAndView, var6);
             }
         }
     }
 
     public boolean checkLevel(@NonNull Levels level, @NonNull Levels userLevel) {
-        if (level == null) {
-            throw new NullPointerException("level is marked non-null but is null");
-        } else if (userLevel == null) {
-            throw new NullPointerException("userLevel is marked non-null but is null");
-        } else {
-            return level.ordinal() <= userLevel.ordinal();
-        }
+        return level.ordinal() <= userLevel.ordinal();
     }
 
     @GetMapping({"/practise/stories/{storyId}"})
     public ModelAndView story(@PathVariable String storyId) {
         ModelAndView modelAndView = new ModelAndView();
-        AuthUser user = this.userService.getUser(this.userSession.getId());
+        AuthUser user = userService.getUser(userSession.getId());
         if (user != null && !user.getLevel().equals(Levels.DEFAULT)) {
-            Long id = null;
+            long id;
 
             try {
                 id = Long.parseLong(storyId);
@@ -152,35 +146,30 @@ public class UserController {
                 return modelAndView;
             }
 
-            UserContent statusContent = this.userService.checkUserStatus(this.userSession.getId());
+            UserContent statusContent = userService.checkUserStatus(userSession.getId());
             if (statusContent != null && !Objects.equals(statusContent.getContent().getId(), id)) {
                 String var10001 = statusContent.getContent().getContentType().equals(ContentType.GRAMMAR) ? "grammars" : "stories";
                 modelAndView.setViewName("redirect:/practise/" + var10001 + "/" + statusContent.getContent().getId());
-                return modelAndView;
             } else {
-                Content content = this.userService.getStoryById(id);
+                Content content = userService.getStoryById(id);
                 if (content == null) {
                     modelAndView.addObject("levelNotFound", "Story not found ");
                     modelAndView.setViewName("user/levelNotFound");
-                    return modelAndView;
                 } else {
-                    List<Comment> comments = this.userService.getComments(content.getId());
-                    modelAndView.addObject("userId", this.userSession.getId());
+                    List<Comment> comments = userService.getComments(content.getId());
+                    modelAndView.addObject("userId", userSession.getId());
                     modelAndView.addObject("comments", comments);
                     modelAndView.addObject("content", content);
                     modelAndView.setViewName("user/story/readingPage");
                     UserContent userContent = new UserContent(user, content, user.getLevel().equals(content.getLevel()) ? Progress.IN_PROGRESS : Progress.FINISHED);
-                    CompletableFuture.runAsync(() -> {
-                        this.userService.saveUserContent(userContent);
-                    });
-                    return modelAndView;
+                    CompletableFuture.runAsync(() -> userService.saveUserContent(userContent));
                 }
             }
         } else {
             modelAndView.addObject("levelNotFound", "You have not taken assessment test yet");
             modelAndView.setViewName("user/levelNotFound");
-            return modelAndView;
         }
+        return modelAndView;
     }
 
     @GetMapping({"/test"})
@@ -191,7 +180,7 @@ public class UserController {
     @PostMapping({"/practise/story/comments/add/{id}"})
     public ModelAndView addComment(@PathVariable String id, @ModelAttribute("comment") Comment comment) {
         ModelAndView modelAndView = new ModelAndView();
-        Long contentId = null;
+        long contentId ;
 
         try {
             contentId = Long.parseLong(id);
@@ -201,26 +190,24 @@ public class UserController {
             return modelAndView;
         }
 
-        Content content = this.userService.getStoryById(contentId);
+        Content content = userService.getStoryById(contentId);
         if (content == null) {
             modelAndView.addObject("levelNotFound", "Story not found ");
             modelAndView.setViewName("user/levelNotFound");
-            return modelAndView;
         } else {
-            comment.setUserId(this.userService.getUser(this.userSession.getId()));
+            comment.setUserId(userService.getUser(userSession.getId()));
             comment.setContentId(content.getId());
-            comment.setCommentType((CommentType)Objects.requireNonNullElse(comment.getCommentType(), CommentType.COMMENT));
-            this.userService.addComment(comment);
+            comment.setCommentType(Objects.requireNonNullElse(comment.getCommentType(), CommentType.COMMENT));
+            userService.addComment(comment);
             modelAndView.setViewName("redirect:/practise/stories/" + content.getId());
-            return modelAndView;
         }
+        return modelAndView;
     }
 
     @PostMapping({"/practise/story/comments/delete/{id}"})
     public ModelAndView deleteComment(@PathVariable String id) {
         ModelAndView modelAndView = new ModelAndView();
-        Long commentId = null;
-
+        long commentId ;
         try {
             commentId = Long.parseLong(id);
         } catch (Exception var6) {
@@ -228,24 +215,22 @@ public class UserController {
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
         }
-
-        Optional<Comment> commentOptional = this.userService.getCommentById(commentId);
+        Optional<Comment> commentOptional = userService.getCommentById(commentId);
         if (commentOptional.isEmpty()) {
             modelAndView.addObject("levelNotFound", "Something went wrong");
             modelAndView.setViewName("user/levelNotFound");
-            return modelAndView;
         } else {
-            Comment comment = (Comment)commentOptional.get();
-            this.userService.deleteCommentById(comment.getId());
+            Comment comment = commentOptional.get();
+            userService.deleteCommentById(comment.getId());
             modelAndView.setViewName("redirect:/practise/stories/" + comment.getContentId());
-            return modelAndView;
         }
+        return modelAndView;
     }
 
     @PostMapping({"/practise/story/comments/update/{commentId}"})
     public ModelAndView updateComment(@PathVariable String commentId, @ModelAttribute("comment") Comment comment) {
         ModelAndView modelAndView = new ModelAndView();
-        Long id = null;
+        long id;
 
         try {
             id = Long.parseLong(commentId);
@@ -255,17 +240,16 @@ public class UserController {
             return modelAndView;
         }
 
-        Optional<Comment> commentOptional = this.userService.getCommentById(id);
+        Optional<Comment> commentOptional = userService.getCommentById(id);
         if (commentOptional.isEmpty()) {
             modelAndView.addObject("levelNotFound", "Something went wrong");
             modelAndView.setViewName("user/levelNotFound");
-            return modelAndView;
         } else {
-            Comment comment1 = (Comment)commentOptional.get();
+            Comment comment1 = commentOptional.get();
             comment1.setComment(comment.getComment());
-            this.userService.updateComment(comment1);
+            userService.updateComment(comment1);
             modelAndView.setViewName("redirect:/practise/stories/" + comment1.getContentId());
-            return modelAndView;
         }
+        return modelAndView;
     }
 }
