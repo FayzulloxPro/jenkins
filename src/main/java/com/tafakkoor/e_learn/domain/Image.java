@@ -12,12 +12,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Image extends Auditable{
-    @Column(nullable = false)
     private String generatedFileName;
-    @Column(nullable = false)
     private String originalFileName;
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String filePath;
-    @Column(nullable = false)
     private String mimeType;
 }

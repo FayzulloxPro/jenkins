@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package com.tafakkoor.e_learn.controller;
 
 import com.tafakkoor.e_learn.config.security.UserSession;
@@ -23,10 +18,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
+
 @Controller
+
 public class UserController {
     private final UserSession userSession;
     private final UserService userService;
@@ -70,15 +67,16 @@ public class UserController {
 
         try {
             levels = Levels.valueOf(level.toUpperCase());
-        } catch (Exception var7) {
+        } catch (Exception e) {
             modelAndView.addObject("flag", true);
             modelAndView.addObject("levelNotFound", "Level not found named %s".formatted(level.toUpperCase()));
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
         }
-
+        List<Content> contents = userService.getContentsStories(levels, userSession.getId());
         AuthUser user = userService.getUser(userSession.getId());
         if (!checkLevel(levels, user.getLevel())) {
+            modelAndView.addObject("flag", true);
             modelAndView.addObject("levelNotFound", "I think it's too early for you to try this level %s".formatted(level.toUpperCase()));
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
@@ -95,14 +93,15 @@ public class UserController {
         }
     }
 
-    @GetMapping({"/practise/grammar/{level}"})
+    @GetMapping("/practise/grammar/{level}")
     public ModelAndView testGrammar(@PathVariable String level) {
         ModelAndView modelAndView = new ModelAndView();
         Levels levels;
 
         try {
             levels = Levels.valueOf(level.toUpperCase());
-        } catch (Exception var7) {
+        } catch (Exception e) {
+            modelAndView.addObject("flag", true);
             modelAndView.addObject("levelNotFound", "Level not found named %s".formatted(level.toUpperCase()));
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
@@ -110,6 +109,7 @@ public class UserController {
 
         AuthUser user = userService.getUser(userSession.getId());
         if (!checkLevel(levels, user.getLevel())) {
+            modelAndView.addObject("flag", true);
             modelAndView.addObject("levelNotFound", "I think it's too early for you to try this level %s".formatted(level.toUpperCase()));
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;

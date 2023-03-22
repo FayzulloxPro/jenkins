@@ -1,6 +1,10 @@
 package com.tafakkoor.e_learn.services;
 
 import com.tafakkoor.e_learn.domain.*;
+import com.tafakkoor.e_learn.domain.AuthUser;
+import com.tafakkoor.e_learn.domain.Content;
+import com.tafakkoor.e_learn.domain.Image;
+import com.tafakkoor.e_learn.domain.UserContent;
 import com.tafakkoor.e_learn.dto.UserRegisterDTO;
 import com.tafakkoor.e_learn.enums.ContentType;
 import com.tafakkoor.e_learn.enums.Levels;
@@ -19,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -26,6 +31,7 @@ public class UserService {
     private final AuthUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final ImageService imageService;
     private final UserContentRepository userContentRepository;
     private final ContentRepository contentRepository;
     private final CommentRepository commentRepository;
@@ -35,6 +41,7 @@ public class UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
+        this.imageService = imageService;
         this.userContentRepository = userContentRepository;
         this.contentRepository = contentRepository;
         this.commentRepository = commentRepository;
@@ -64,9 +71,9 @@ public class UserService {
 
     public void saveUserAndSendEmail(UserRegisterDTO dto) {
         AuthUser user = AuthUser.builder()
-                .username(dto.getUsername())
+                .username(dto.getUsername().toLowerCase())
                 .password(passwordEncoder.encode(dto.getPassword()))
-                .email(dto.getEmail())
+                .email(dto.getEmail().toLowerCase())
                 .build();
         userRepository.save(user);
         sendActivationEmail(user);
@@ -162,6 +169,110 @@ public class UserService {
     public void updateComment(Comment comment1) {
         commentRepository.updateComment(comment1.getComment(), comment1.getId());
     }
+    // Abdullo's code below that
+
+
+    public boolean userExist(String username) {
+        AuthUser user = userRepository.findByUsername(username);
+        return user != null;
+    }
+
+    public void saveGoogleUser(Map<String, Object> attributes) {
+        String picture = (String) attributes.get("picture");
+        Image imageBuild = Image.builder()
+                .mimeType("image/jpg")
+                .generatedFileName("google.jpg")
+                .originalFileName("google.jpg")
+                .filePath(picture)
+                .build();
+        String firstname = (String) attributes.get("given_name");
+        String lastname = (String) attributes.get("family_name");
+        String email = (String) attributes.get("email");
+        String username = (String) attributes.get("sub");
+
+        Image image = imageService.saveImage(imageBuild);
+//        Image finalImage = imageService.findById(image.getId());
+        String password = "the.Strongest.Password@Ever9";
+        AuthUser user = AuthUser.builder()
+                .username(username)
+                .password(passwordEncoder.encode(password))
+                .email(email)
+                .firstName(firstname)
+                .lastName(lastname)
+                .image(image)
+                .status(Status.ACTIVE)
+                .build();
+        userRepository.save(user);
+    }
+
+    public void saveFacebookUser(Map<String, Object> attributes) {
+        String fullName = (String) attributes.get("name");
+        String email = (String) attributes.get("email");
+        String username = (String) attributes.get("id");
+        String password = "the.Strongest.Password@Ever9";
+        String firstName = null;
+        String lastName = null;
+        String[] strings = fullName.split(" ");
+
+        if (strings.length == 2) {
+            firstName = strings[0];
+            lastName = strings[1];
+        } else firstName = strings[0];
+
+        AuthUser user = AuthUser.builder()
+                .username(username)
+                .password(passwordEncoder.encode(password))
+                .email(email)
+                .firstName(firstName)
+                .lastName(lastName)
+                .status(Status.ACTIVE)
+                .build();
+        userRepository.save(user);
+
+    }
+
+    public void saveLinkedinUser(Map<String, Object> attributes) {
+        attributes.entrySet().forEach(System.out::println);
+    }
+
+    public void updateRole(Long id, String role) {
+        AuthUser user = userRepository.findById(id);
+        user.getAuthRoles().clear();
+        user.getAuthRoles().add(userRepository.findRoleByName(role));
+        userRepository.save(user);
+    }
+
+    /*public void saveGithubUser(Map<String, Object> attributes) {
+        String id = attributes.get("id").toString();
+        BigInteger username = Util.getInstance().convertToBigInteger(id);
+        System.out.println(username);
+//        String email = (String) attributes.get("email");
+//        String password = "the.Strongest.Password@Ever9";
+//        String firstName = (String) attributes.get("name");
+//        String lastName = null;
+//        String[] strings = firstName.split(" ");
+
+        for (Map.Entry<String, Object> stringObjectEntry : attributes.entrySet()) {
+            System.out.println(stringObjectEntry.getKey() + " : " + stringObjectEntry.getValue());
+        }
+
+//        if (strings.length == 2) {
+//            firstName = strings[0];
+//            lastName = strings[1];
+//        } else firstName = strings[0];
+
+//        AuthUser user = AuthUser.builder()
+//                .username(username)
+//                .password(passwordEncoder.encode(password))
+//                .email(email)
+//                .firstName(firstName)
+//                .lastName(lastName)
+//                .status(Status.ACTIVE)
+//                .build();
+//        userRepository.save(user);
+    }*/
+
+}
 
     public void saveUserContent(UserContent userContent) {
         userContentRepository.save(userContent);

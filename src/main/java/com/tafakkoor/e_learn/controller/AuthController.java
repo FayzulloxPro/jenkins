@@ -23,16 +23,11 @@ import java.util.Optional;
 public class AuthController {
     private final AuthUserRepository authUserRepository;
     private final UserService userService;
-
     private final TokenRepository tokenRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    public AuthController(AuthUserRepository authUserRepository, UserService userService, TokenRepository tokenRepository, PasswordEncoder passwordEncoder ) {
+    public AuthController(AuthUserRepository authUserRepository, UserService userService, TokenRepository tokenRepository ) {
         this.authUserRepository = authUserRepository;
         this.userService = userService;
         this.tokenRepository = tokenRepository;
-        this.passwordEncoder = passwordEncoder;
-
     }
 
     @GetMapping( "/register" )
