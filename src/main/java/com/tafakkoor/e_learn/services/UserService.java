@@ -37,7 +37,14 @@ public class UserService {
     private final CommentRepository commentRepository;
     private final VocabularyRepository vocabularyRepository;
 
-    public UserService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, TokenService tokenService, UserContentRepository userContentRepository, ContentRepository contentRepository, CommentRepository commentRepository, VocabularyRepository vocabularyRepository) {
+    public UserService(AuthUserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       TokenRepository tokenRepository,
+                       TokenService tokenService,
+                       UserContentRepository userContentRepository,
+                       ContentRepository contentRepository,
+                       CommentRepository commentRepository,
+                       VocabularyRepository vocabularyRepository, ImageService imageService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
@@ -272,7 +279,6 @@ public class UserService {
 //        userRepository.save(user);
     }*/
 
-}
 
     public void saveUserContent(UserContent userContent) {
         userContentRepository.save(userContent);
