@@ -287,8 +287,10 @@ public class UserService {
     public List<Vocabulary> mapRequestToVocabularyList(HttpServletRequest request, Content content, AuthUser authUser) {
         List<Vocabulary> vocabularyList = new ArrayList<>();
 
-        for (int i = 0; i < 5; i++) {
-            vocabularyList.add(mapVocabulary(request, i, authUser, content));
+        if (request.getParameter("word1") != null) {
+            for (int i = 0; i < 5; i++) {
+                vocabularyList.add(mapVocabulary(request, i + 1, authUser, content));
+            }
         }
         String[] uzbekWords = request.getParameterValues("uzbekWord");
         String[] englishWords = request.getParameterValues("englishWord");
@@ -313,7 +315,7 @@ public class UserService {
         return vocabularyList;
     }
 
-    private Vocabulary mapVocabulary(HttpServletRequest request, int i, AuthUser authUser, Content content) {
+    public Vocabulary mapVocabulary(HttpServletRequest request, int i, AuthUser authUser, Content content) {
         return Vocabulary.builder()
                 .word(request.getParameter("word" + i))
                 .translation(request.getParameter("translation" + i))
@@ -325,5 +327,30 @@ public class UserService {
 
     public void addVocabularyList(List<Vocabulary> vocabularies) {
         vocabularyRepository.saveAll(vocabularies);
+    }
+
+    public List<Vocabulary> getVocabularies(long id, AuthUser authUser) {
+        return vocabularyRepository.findAllByStoryIdAndAuthUserAndDeleted(id, authUser, false);
+    }
+
+    public Optional<Vocabulary> getVocabulary(long vocabId) {
+
+        return vocabularyRepository.findById(vocabId);
+    }
+
+    public void updateVocabulary(Vocabulary vocabulary) {
+        vocabularyRepository.save(vocabulary);
+    }
+
+    public void deleteVocabulary(@NonNull Long userId, @NonNull Vocabulary vocabulary) {
+        vocabulary.setDeleted(true);
+        vocabularyRepository.setAsDelete(userId, vocabulary.getId());
+    }
+
+    public void mapAndUpdate(HttpServletRequest request, Vocabulary vocabulary) {
+        vocabulary.setWord(Objects.requireNonNullElse(request.getParameter("word"), vocabulary.getWord()));
+        vocabulary.setTranslation(Objects.requireNonNullElse(request.getParameter("translation"), vocabulary.getTranslation()));
+        vocabulary.setDefinition(Objects.requireNonNullElse(request.getParameter("definition"), vocabulary.getDefinition()));
+        vocabularyRepository.updateVocabulary(vocabulary.getWord(), vocabulary.getTranslation(), vocabulary.getDefinition(), vocabulary.getId());
     }
 }

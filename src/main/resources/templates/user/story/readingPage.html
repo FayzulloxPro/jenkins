@@ -147,17 +147,17 @@
             <br>
         </section>
     </div>
-    <div>
+    <div th:if="${vocabularies.size()==0}">
         <form method="post" th:action="@{/practise/words/add/{id}(id=${content.id})}">
             <div class="container">
                 <div class="wrap">
                     <h2>Add vocabularies</h2>
-                    <a href="#" class="add">+</a>
+                    <button href="#" class="add" type="button">+</button>
                 </div>
                 <div>
                     <span>You have to add at least 5 words to take a test and earn points :)</span>
                 </div>
-                <div class="inp-group">
+                <div class="inp1-group" >
                     <div class="flex">
                         <input type="text" name="word1" placeholder="english" required>
                         <input type="text" name="translation1" placeholder="translation" required>
@@ -192,6 +192,47 @@
         </form>
 
     </div>
+    <div th:if="${vocabularies.size()!=0}">
+        <form method="post" th:action="@{/practise/words/add/{id}(id=${content.id})}">
+            <div class="container">
+                <div class="wrap">
+                    <h2>Add vocabularies</h2>
+                    <button class="add" type="button">+</button>
+                </div>
+                <div>
+                    <span>You have to add at least 5 words to take a test and earn points :)</span>
+                </div>
+
+                <div class="inp-group">
+
+                </div>
+                <button class="btn btn-primary" type="submit">Add all</button>
+            </div>
+        </form>
+
+    </div>
+
+    <div class="container" th:if="${vocabularies.size()!=0}">
+        <button class="btn btn-primary btn-sm" onclick="myFunction()">My words</button>
+        <div id="myDIV">
+            <div class="inp-group" th:each="vocabulary : ${vocabularies}">
+                <form method="post" th:action="@{/practise/words/update/{id}(id=${vocabulary.id})}">
+                    <div class="flex">
+                        <input type="text" name="word" placeholder="english" required
+                               th:value="${vocabulary.word}">
+                        <input type="text" name="translation" placeholder="translation" required
+                               th:value="${vocabulary.translation}">
+                        <input type="text" name="definition" placeholder="definition"
+                               th:value="${vocabulary.definition}">
+                        <button class="btn btn-warning btn-sm" type="submit">Update</button>
+                    </div>
+                </form>
+                <form method="post" th:action="@{/practise/words/delete/{id}(id=${vocabulary.id})}">
+                    <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <div>
         <form th:action="@{/practise/story/comments/add/{id}(id=${content.id})}" method="post">
@@ -205,6 +246,7 @@
                 <button class="btn btn-primary" type="submit">Add</button>
             </div>
         </form>
+
         <div th:if="${comments.size()==0}">
             <div class="col-md-5 offset-1" style="margin-left: 25px; background-color: #e9ecef; border-radius: 5px">
                 <div style="margin-left: 30px">No comments</div>
@@ -341,8 +383,6 @@
     }
 </script>
 <script>
-
-
     const addBtn = document.querySelector(".add");
     const input = document.querySelector(".inp-group");
 
@@ -387,6 +427,16 @@
     }
 
     addBtn.addEventListener("click", addInput);
+</script>
+<script>
+    function myFunction() {
+        var x = document.getElementById("myDIV");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
 </script>
 </body>
 </html>

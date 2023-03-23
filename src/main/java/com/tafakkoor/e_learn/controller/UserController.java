@@ -136,7 +136,6 @@ public class UserController {
         AuthUser user = userService.getUser(userSession.getId());
         if (user != null && !user.getLevel().equals(Levels.DEFAULT)) {
             long id;
-
             try {
                 id = Long.parseLong(storyId);
             } catch (Exception var9) {
@@ -156,6 +155,8 @@ public class UserController {
                     modelAndView.setViewName("user/levelNotFound");
                 } else {
                     List<Comment> comments = userService.getComments(content.getId());
+                    List<Vocabulary> vocabularies = userService.getVocabularies(content.getId(), user);
+                    modelAndView.addObject("vocabularies", vocabularies);
                     modelAndView.addObject("userId", userSession.getId());
                     modelAndView.addObject("comments", comments);
                     modelAndView.addObject("content", content);
@@ -180,7 +181,6 @@ public class UserController {
     public ModelAndView addComment(@PathVariable String id, @ModelAttribute("comment") Comment comment) {
         ModelAndView modelAndView = new ModelAndView();
         long contentId ;
-
         try {
             contentId = Long.parseLong(id);
         } catch (Exception var6) {
@@ -188,7 +188,6 @@ public class UserController {
             modelAndView.setViewName("user/levelNotFound");
             return modelAndView;
         }
-
         Content content = userService.getStoryById(contentId);
         if (content == null) {
             modelAndView.addObject("levelNotFound", "Story not found ");
@@ -284,6 +283,71 @@ public class UserController {
         } else {
 
             modelAndView.setViewName("redirect:/practise/stories/" + content.getId());
+        }
+        return modelAndView;
+    }
+
+
+
+    @PostMapping("/practise/words/update/{id}")
+    public ModelAndView updateWord(@PathVariable String id, HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+        long vocabId;
+        try {
+            vocabId = Long.parseLong(id);
+        } catch (Exception e) {
+            modelAndView.addObject("levelNotFound", "Vocabulary not found ");
+            modelAndView.setViewName("user/levelNotFound");
+            return modelAndView;
+        }
+        Content content=null;
+        AuthUser user = userSession.getUser();
+        try {
+            Optional<Vocabulary> vocabularyOptional = userService.getVocabulary(vocabId);
+            Vocabulary vocabulary = vocabularyOptional.get();
+            content = vocabulary.getStory();
+            userService.mapAndUpdate(request, vocabulary);
+            modelAndView.setViewName("redirect:/practise/stories/" + content.getId());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            List<Vocabulary> vocabularies = userService.getVocabularies(content.getId(), user);
+            List<Comment> comments = userService.getComments(content.getId());
+            modelAndView.addObject("userId", userSession.getId());
+            modelAndView.addObject("vocabularies", vocabularies);
+            modelAndView.addObject("comments", comments);
+            modelAndView.addObject("content", content);
+            modelAndView.setViewName("user/story/readingPage");
+        }
+        return modelAndView;
+    }
+
+    @PostMapping("/practise/words/delete/{id}")
+    public ModelAndView deleteWord(@PathVariable String id, HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+        long vocabId;
+        try {
+            vocabId = Long.parseLong(id);
+        } catch (Exception e) {
+            modelAndView.addObject("levelNotFound", "Story not found ");
+            modelAndView.setViewName("user/levelNotFound");
+            return modelAndView;
+        }
+        Content content=null;
+        AuthUser user = userSession.getUser();
+        try {
+            Optional<Vocabulary> vocabularyOptional = userService.getVocabulary(vocabId);
+            Vocabulary vocabulary = vocabularyOptional.get();
+            content = vocabulary.getStory();
+            userService.deleteVocabulary(userSession.getId(), vocabulary);
+            modelAndView.setViewName("redirect:/practise/stories/" + content.getId());
+        } catch (Exception e) {
+            List<Comment> comments = userService.getComments(content.getId());
+            List<Vocabulary> vocabularies = userService.getVocabularies(content.getId(), user);
+            modelAndView.addObject("userId", userSession.getId());
+            modelAndView.addObject("vocabularies", vocabularies);
+            modelAndView.addObject("comments", comments);
+            modelAndView.addObject("content", content);
+            modelAndView.setViewName("user/story/readingPage");
         }
         return modelAndView;
     }
