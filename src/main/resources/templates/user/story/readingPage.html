@@ -212,9 +212,10 @@
 
     </div>
 
-    <div class="container" th:if="${vocabularies.size()!=0}">
-        <button class="btn btn-primary btn-sm" onclick="myFunction()">My words</button>
-        <div id="myDIV">
+    <br>
+    <div class="container" th:if="${vocabularies.size()!=0}" >
+        <button class="btn btn-primary btn-sm" onclick="myFunction1()">My words</button>
+        <div id="myDIV" style="display: none">
             <div class="inp-group" th:each="vocabulary : ${vocabularies}">
                 <form method="post" th:action="@{/practise/words/update/{id}(id=${vocabulary.id})}">
                     <div class="flex">
@@ -237,8 +238,8 @@
     <div>
         <form th:action="@{/practise/story/comments/add/{id}(id=${content.id})}" method="post">
             <div class="col-md-4 offset-1">
-                <label for="comment">Comment</label>
-                <textarea placeholder="Leave your comment" class="form-control" id="comment" name="comment"
+                <label for="comment1">Comment</label>
+                <textarea placeholder="Leave your comment" class="form-control" id="comment1" name="comment"
                           rows="4"></textarea>
             </div>
             <br>
@@ -293,10 +294,30 @@
                                         style="margin-left: 5px; background-color: #0a53be"
                                         th:text="'commented by '+${comment.userId?.username}"></button>
                             </form>
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal">
+                            <button type="button" class="btn btn-primary btn-sm" th:onclick="'reply(\''+${comment.id}+'\');'">
                                 Reply
                             </button>
+                            <div th:id="${comment.id}" style="display: none">
+                                <form th:action="@{/practise/story/comments/add/{id}(id=${content.id})}" method="post">
+                                    <input type="hidden" name="parentId" th:value="${comment.id}">
+                                    <div class="col-md-4 offset-1">
+                                        <label for="comment">Comment</label>
+                                        <textarea placeholder="Leave your comment" class="form-control" id="comment" name="comment"
+                                                  rows="4"></textarea>
+                                    </div>
+                                    <label>
+                                        <h6>Send as</h6>
+                                        <select name="commentType">
+                                            <option value="COMMENT" selected>Comment</option>
+                                            <option value="ANSWER">Answer</option>
+                                        </select>
+                                    </label>
+                                    <br>
+                                    <div class="col-md-4 offset-1">
+                                        <button class="btn btn-primary" type="submit">Send</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <br>
@@ -429,8 +450,16 @@
     addBtn.addEventListener("click", addInput);
 </script>
 <script>
-    function myFunction() {
+    function myFunction1() {
         var x = document.getElementById("myDIV");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+    function reply(a) {
+        var x = document.getElementById(a);
         if (x.style.display === "none") {
             x.style.display = "block";
         } else {

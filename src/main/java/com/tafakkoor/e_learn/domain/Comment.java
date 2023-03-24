@@ -22,6 +22,8 @@ public class Comment extends Auditable {
     private AuthUser userId;
     @Column(name = "content_id", nullable = false)
     private Long contentId;
-    private Long parentId;
+    @JoinColumn(name = "parentid")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Comment parentId;
 
 }

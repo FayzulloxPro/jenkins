@@ -162,7 +162,7 @@ public class UserService {
     }
 
     public void addComment(Comment comment) {
-        commentRepository.saveComment(comment.getComment(), String.valueOf(comment.getCommentType()), comment.getUserId().getId(), comment.getContentId(), comment.getParentId());
+        commentRepository.saveComment(comment.getComment(), String.valueOf(comment.getCommentType()), comment.getUserId().getId(), comment.getContentId(), comment.getParentId().getId());
     }
 
     public Optional<Comment> getCommentById(Long commentId) {
