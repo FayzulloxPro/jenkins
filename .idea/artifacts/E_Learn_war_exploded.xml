@@ -14,6 +14,9 @@
           <element id="module-output" name="E_Learn" />
         </element>
         <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.14.2" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.14.2" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.14.2" />
           <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:6.0.6" />
           <element id="library" level="project" name="Maven: org.springframework:spring-aop:6.0.6" />
           <element id="library" level="project" name="Maven: org.springframework:spring-beans:6.0.6" />
@@ -23,10 +26,7 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-expression:6.0.6" />
           <element id="library" level="project" name="Maven: org.springframework:spring-web:6.0.6" />
           <element id="library" level="project" name="Maven: org.springframework.social:spring-social-linkedin:1.0.2.RELEASE" />
-          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.6.1" />
-          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.6.1" />
           <element id="library" level="project" name="Maven: org.springframework.social:spring-social-core:1.1.0.RELEASE" />
-          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.6.1" />
           <element id="library" level="project" name="Maven: org.springframework.social:spring-social-config:1.1.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.social:spring-social-security:1.1.6.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.social:spring-social-web:1.1.6.RELEASE" />
@@ -116,7 +116,7 @@
           <element id="library" level="project" name="Maven: io.micrometer:micrometer-commons:1.10.2" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-config:6.0.1" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-web:6.0.1" />
-          <element id="library" level="project" name="Maven: org.jetbrains:annotations:24.0.1" />
+          <element id="library" level="project" name="Maven: org.jetbrains:annotations:24.1.0" />
         </element>
       </element>
       <element id="directory" name="META-INF">
