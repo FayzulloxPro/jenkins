@@ -249,36 +249,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    /*public void saveGithubUser(Map<String, Object> attributes) {
-        String id = attributes.get("id").toString();
-        BigInteger username = Util.getInstance().convertToBigInteger(id);
-        System.out.println(username);
-//        String email = (String) attributes.get("email");
-//        String password = "the.Strongest.Password@Ever9";
-//        String firstName = (String) attributes.get("name");
-//        String lastName = null;
-//        String[] strings = firstName.split(" ");
-
-        for (Map.Entry<String, Object> stringObjectEntry : attributes.entrySet()) {
-            System.out.println(stringObjectEntry.getKey() + " : " + stringObjectEntry.getValue());
-        }
-
-//        if (strings.length == 2) {
-//            firstName = strings[0];
-//            lastName = strings[1];
-//        } else firstName = strings[0];
-
-//        AuthUser user = AuthUser.builder()
-//                .username(username)
-//                .password(passwordEncoder.encode(password))
-//                .email(email)
-//                .firstName(firstName)
-//                .lastName(lastName)
-//                .status(Status.ACTIVE)
-//                .build();
-//        userRepository.save(user);
-    }*/
-
 
     public void saveUserContent(UserContent userContent) {
         userContentRepository.save(userContent);

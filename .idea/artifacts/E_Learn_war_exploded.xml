@@ -47,6 +47,7 @@
           <element id="library" level="project" name="Maven: org.hibernate.validator:hibernate-validator:7.0.5.Final" />
           <element id="library" level="project" name="Maven: org.jboss.logging:jboss-logging:3.4.1.Final" />
           <element id="library" level="project" name="Maven: com.fasterxml:classmate:1.5.1" />
+          <element id="library" level="project" name="Maven: net.bytebuddy:byte-buddy:1.14.10" />
           <element id="library" level="project" name="Maven: com.google.apis:google-api-services-gmail:v1-rev20230206-2.0.0" />
           <element id="library" level="project" name="Maven: com.sun.mail:javax.mail:1.6.2" />
           <element id="library" level="project" name="Maven: javax.activation:activation:1.1" />
@@ -93,7 +94,6 @@
           <element id="library" level="project" name="Maven: jakarta.transaction:jakarta.transaction-api:2.0.0" />
           <element id="library" level="project" name="Maven: org.hibernate.common:hibernate-commons-annotations:6.0.6.Final" />
           <element id="library" level="project" name="Maven: org.jboss:jandex:2.4.2.Final" />
-          <element id="library" level="project" name="Maven: net.bytebuddy:byte-buddy:1.12.18" />
           <element id="library" level="project" name="Maven: jakarta.xml.bind:jakarta.xml.bind-api:3.0.1" />
           <element id="library" level="project" name="Maven: com.sun.activation:jakarta.activation:2.0.1" />
           <element id="library" level="project" name="Maven: org.glassfish.jaxb:jaxb-runtime:3.0.2" />
