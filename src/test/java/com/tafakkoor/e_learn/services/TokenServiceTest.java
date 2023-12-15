@@ -40,6 +40,7 @@ class TokenServiceTest {
 
     @Test
     void testGenerateToken() {
+
         String generatedToken = tokenService.generateToken();
         assertNotNull(generatedToken);
     }
